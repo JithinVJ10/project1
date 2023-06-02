@@ -12,7 +12,7 @@ const connectDB = require("./server/database/connection")
 const twilioRoute = require("./server/route/twilio-sms")
 
 const app = express()
-//cmt
+
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 
