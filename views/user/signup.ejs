@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="assetUser/css/signup.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand ps-4" href="/">CRICKET NATION</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+    <section class="mt-4">
+        <div class="form-box">
+            <div class="form-value">
+                <form action="/signup" method="post" name="signup" onsubmit=" return validateSignup()">
+                    <p id="head">Create New Account</p>
+                    <%if(locals.msg){%>
+                        <div class="alert alert-danger text-center m-3 p-3" id="msg">
+                            <%= msg %>
+                        </div>
+
+                     <%}%>
+                    <div class="inputbox">
+                        
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" name="name" id="name">
+                        <label for="">Username</label>
+                        <span id="name-error" style="color: red;"></span>
+                    </div>
+                    <div class="inputbox">
+                        
+                      <ion-icon name="mail-outline"></ion-icon>
+                        <input type="email" name="email" id="email" onkeyup="vaildateEmail()">
+                        <label for="">Email</label>
+                        <span id="email-error" style="color: red;"></span>
+                    </div>
+                    <div class="inputbox">
+                        
+                        <ion-icon name="call-outline"></ion-icon>
+                          <input type="number" name="mobile" id="mobile" onkeyup="validatePhoneNumber()">
+                          <label for="">Phone</label>
+                          <span id="phone-error" style="color: red;"></span>
+                      </div>
+                    <div class="inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" name="password" id="password" onkeyup="validatePassword()">
+                        <label for="">Password</label>
+                        <span id="password-error" style="color: red;"></span>
+                    </div>
+                    <div class="inputbox">
+                      <ion-icon name="lock-closed-outline"></ion-icon>
+                      <input type="password" name="confirmpassword" id="confirmpassword">
+                      <label for="">Confirm Password</label>
+                      <span id="confirmpassword-error" style="color: red;"></span>
+                  </div>
+                  
+                    
+                    <button type="submit" class="rounded-2 btn btn-success" >Register</button>
+                    <div class="register">
+                        <p>Alread have account? <a href="/login">login</a></p>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+      setTimeout(()=>{
+        document.getElementById("msg").style.display ="none"
+      },2000)
+    </script>
+    <script>
+      var nameError = document.getElementById('name-error');
+      var emailError = document.getElementById('email-error');
+      var passwordError = document.getElementById('password-error');
+      var numberError = document.getElementById('phone-error')
+      var confirmpasswordError = document.getElementById('confirmpassword-error');
+
+      // function vaildateName(){
+      //   var name = document.getElementById('name').value
+        
+      //   if(name.length == 0){
+      //     nameError.innerHTML = 'Name is required';
+      //     return false;
+      //   }
+      //   if(!name.match(/^[a-zA-Z]*\s{1}[a-zA-Z]*$/)){
+      //     nameError.innerHTML = 'Write the full name';
+      //     return false;
+      //   }
+      //   nameError.innerHTML = '✔';
+      //   return true;
+        
+      // }
+
+      function vaildateEmail(){
+        var email = document.getElementById('email').value
+        
+        if(email.length == 0){
+          emailError.innerHTML = 'Email is required';
+          return false;
+        }
+        var regx = /^\S+@\S+\.\S+$/;
+        if(regx.test(email) === false){
+          emailError.innerHTML = 'Invaild email';
+          return false;
+        }
+        emailError.innerHTML = '<span style="color: green;">✔</span>'
+        return true;
+        
+      }
+
+      function validatePhoneNumber() {
+        let number = document.getElementById('mobile').value
+        if(number.length == 0){
+          numberError.innerHTML = 'Number is required';
+          return false;
+        }
+        // Regular expression for phone number validation
+        const phonePattern = /^\d{10}$/;
+
+        if (phonePattern.test(number) == false) {
+          numberError.innerHTML ="Invaild Phone Number"
+          return false
+        }
+
+        numberError.innerHTML = '<span style="color: green;">✔</span>'
+        return true;
+        
+      }
+
+      function validatePassword() {
+        let password = document.getElementById('password').value
+
+        // Password should be at least 4 characters long
+        if (password.length < 4) {
+          passwordError.innerHTML ="atleast 4 characters long"
+          return false;
+        }
+
+        // Password should contain at least one lowercase letter
+        if (!/[a-z]/.test(password)) {
+          passwordError.innerHTML ="atleast one lowercase letter"
+          return false;
+        }
+
+        // Password should contain at least one number
+        if (!/\d/.test(password)) {
+          passwordError.innerHTML ="atleast one number"
+          return false;
+        }
+
+
+        // Password is valid
+        passwordError.innerHTML = '<span style="color: green;">✔</span>'
+        return true; 
+      }
+
+    
+
+
+
+      function validateSignup() {
+        let name = document.forms["signup"]["name"].value.trim();
+        let email = document.forms["signup"]["email"].value.trim();
+        let phone = document.forms["signup"]["mobile"].value.trim();
+        let password = document.forms["signup"]["password"].value;
+        let confirmpassword = document.forms["signup"]["confirmpassword"].value;
+        
+
+        if (name == "") {
+          alert("Name must be filled out");
+          return false;
+        }
+              // Validation for email field
+        if (email == "") {
+          alert("Email must be filled out");
+          return false;
+        } else {
+          // regex for email validation
+          var email_regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+          if (!email_regex.test(email)) {
+            alert("Invalid email address");
+            return false;
+          }
+        }
+        //validation for username
+        if (username == "") {
+          alert("Username must be filled out");
+          return false;
+        }
+
+
+        // Validation for password field
+        if (password == "") {
+          alert("Password must be filled out");
+          return false;
+        }
+
+        if (phone == "") {
+          alert("Phonenumber must be filled out");
+          return false;
+        }
+
+        if(confirmpassword !== password) {
+				alert("Confirm your password correctly")
+				return false;
+			  }
+
+        return true; // form is valid
+		}
+    </script>
+</body>
+</html>
