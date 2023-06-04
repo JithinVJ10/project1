@@ -532,6 +532,25 @@ exports.ordersDetails = async (req,res)=>{
   }
 }
 
+exports.singleOrderDetails = async (req,res)=>{
+  if (req.session.user) {
+    try {
+      const user = req.session.user
+      const id = req.params.id
+
+      const order = await Order.findById(id)
+
+      res.render("Single-orderDetails",{order})
+    } catch (error) {
+      res.sent("Error")
+      
+    }
+  }else{
+    res.redirect("/")
+  }
+
+}
+
 exports.orderCancel = async (req,res) =>{
   try {
     const id = req.params.id
