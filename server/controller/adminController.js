@@ -126,24 +126,6 @@ exports.dashboard = async (req,res)=>{
     }
 }
 
-// GET render Admin products view page
-
-exports.adminProducts = async (req,res) =>{
-    if (req.session.admin) {
-        try {
-            const products = await Product.find()
-            
-            res.render('productAdmin', { products });
-          } catch (err) {
-            console.error(err);
-            res.status(500).json({ message: 'Server error' });
-          }
-        
-    }else{
-        res.redirect('/admin')
-    }
-}
-
 
 // // Sales report on pdf  and execl
 
@@ -151,21 +133,22 @@ exports.adminProducts = async (req,res) =>{
 
 // }
 
-// admin add product page rendering GET
 
-exports.addProduct = async (req,res) =>{
-    if (req.session.admin) {
-        try {
-            const catagory = await Catagory.find()
+// admin user view page rendering with users data
 
-            res.render("add-products",{catagory})
-        } catch (err) {
-            console.log(err);
-            res.status(500).send('Server error')
-        }
-    }else{
-        res.redirect('/admin')
+exports.adminUser = async (req,res) =>{
+  if (req.session.admin) {
+    try {
+        const data = await userData.find()
+        res.render("user",{data})
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("server error")
     }
+  }else{
+      res.redirect('/admin')
+  }
 }
 
 // GET Search and Sort products
