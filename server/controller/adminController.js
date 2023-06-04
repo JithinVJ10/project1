@@ -3,7 +3,7 @@ const Product = require("../model/product_model")
 const Catagory = require("../model/add_catagery")
 const userData = require("../model/model")
 
-// GET method ADMIN dashboard Rendering with Sales report
+// GET method ADMIN dashboard Rendering with Sales report "/admim"
 
 exports.dashboard = async (req,res)=>{
     try {
@@ -144,6 +144,13 @@ exports.adminProducts = async (req,res) =>{
     }
 }
 
+
+// // Sales report on pdf  and execl
+
+// exports.pdf_execlDownload = async (req,res) =>{
+
+// }
+
 // admin add product page rendering GET
 
 exports.addProduct = async (req,res) =>{
@@ -157,7 +164,7 @@ exports.addProduct = async (req,res) =>{
             res.status(500).send('Server error')
         }
     }else{
-        res.redirect('/products-admin')
+        res.redirect('/admin')
     }
 }
 
