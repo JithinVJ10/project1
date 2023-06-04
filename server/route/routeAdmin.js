@@ -11,7 +11,8 @@ const userData = require("../model/model")
 const adminController = require("../controller/adminController")
 const Order = require("../model/order_model")
 
-// admin login details
+
+// ADMIN login details
 const credAdmin = {
     email:"jithin@gmail.com",
     password:"123"
@@ -73,10 +74,10 @@ route.get("/admin",adminController.dashboard);
 // PRODUCTS
 
 // admin product page loading with data
-route.get("/products-admin", adminController.adminProducts)
+route.get("/products-admin", controller.adminProducts)
 
 // admin add products page rendering
-route.get("/addProduct",adminController.addProduct)
+route.get("/addProduct",controller.addProduct)
 
 // products search and sort
 route.get("/productsSearch",adminController.productsSearch)
@@ -95,24 +96,9 @@ route.get("/editCatagory/:id",adminController.editCatagory)
 // USER view Admin
 
 // admin user view page rendering with users data
-route.get("/user-admin",async(req,res)=>{
+route.get("/user-admin",adminController.adminUser)
 
-    if (req.session.admin) {
-        try {
-            const data = await userData.find()
-            res.render("user",{data})
-
-        } catch (err) {
-            console.log(err);
-            res.status(500).send("server error")
-        }
-    }else{
-        res.redirect('/admin')
-    }
-    
-})
-
-// user block and unblock
+// User block and unblock
 
 route.put("/block-user/:id", adminController.blockUser)
 
@@ -146,6 +132,8 @@ route.get("/error-404",(req,res)=>{
         res.render("/admin")
     }
 })
+
+// LOGOUT FUNCTION
 
 route.get("/admin/logout",(req,res)=>{
     req.session.admin = null
