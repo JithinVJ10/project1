@@ -274,10 +274,12 @@ route.post("/update-address/:id",UserControl.updateAddress)
 route.get("/checkout/:id",UserControl.checkout)
 route.post("/order/:id",UserControl.placeorder)
 route.get("/orders-details",UserControl.ordersDetails)
+route.get("/singleOrderDetails/:id",UserControl.singleOrderDetails)
 route.get("/order-cancel/:id",UserControl.orderCancel)
 route.get("/order-return/:id",UserControl.orderReturn)
 
 
+// PAYPAL GET route
 route.get('/paypal-success',UserControl.paypal_success)
 route.get('/paypal-success',UserControl.paypal_err)
 
