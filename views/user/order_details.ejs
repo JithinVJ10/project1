@@ -252,7 +252,7 @@
                             </thead>
                             <tbody>
                               <% orderDetails.forEach((orders) => { %>
-							   <a href="#">
+							   <a href="/singleOrderDetails/<%= orders._id  %>">
                                 <tr> 
                                     <td><%= orders.createdAt.toLocaleDateString() %></td>
                                     <td>
@@ -290,6 +290,7 @@
 												<p>Return Not available</p>
 											  <% } %>
 										</td>
+										<td><a href="/singleOrderDetails/<%= orders._id  %>" class="btn-secondary">Details</a></td>
 									
                                 </tr>
 							   </a>
