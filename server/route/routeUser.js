@@ -51,7 +51,9 @@ route.get("/product", async (req,res)=>{
         }
         
     }else{
-        res.redirect("/login")
+        const data = await Product.find()
+        const catagory = await Catagory.find()
+        res.render("product", {data,catagory})
     }
     
 })
