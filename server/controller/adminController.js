@@ -3,6 +3,129 @@ const Product = require("../model/product_model")
 const Catagory = require("../model/add_catagery")
 const userData = require("../model/model")
 
+// GET method ADMIN dashboard Rendering with Sales report
+
+exports.dashboard = async (req,res)=>{
+    try {
+        
+        if (req.session.admin) {
+  
+          const today = new Date().toISOString().split("T")[0];
+          const startOfDay = new Date(today);
+          const endOfDay = new Date(today);
+          endOfDay.setDate(endOfDay.getDate() + 1);
+          endOfDay.setMilliseconds(endOfDay.getMilliseconds() - 1);
+  
+          const orders = await Order.find(); // Fetching all orders from the database
+  
+          // Extracting necessary data for the chart
+          const salesData = orders.map(order => ({
+            createdAt: order.createdAt.toISOString().split('T')[0], // Extracting date only
+            total: order.total
+          }));
+    
+          // Calculating the total sales for each date
+          const salesByDate = salesData.reduce((acc, curr) => {
+            acc[curr.createdAt] = (acc[curr.createdAt] || 0) + curr.total;
+            return acc;
+          }, {});
+    
+          // Converting the sales data into separate arrays for chart labels and values
+          const chartLabels = Object.keys(salesByDate);
+          const chartData = Object.values(salesByDate);
+        
+          const todaySales = await Order
+            .countDocuments({
+              createdAt: { $gte: startOfDay, $lt: endOfDay },
+              status: "Delivered",
+            })
+            .exec();
+          console.log(todaySales);
+        
+          const totalsales = await Order.countDocuments({ status: "Delivered" });
+        
+          const todayRevenue = await Order.aggregate([
+            {
+              $match: {
+                createdAt: { $gte: startOfDay, $lt: endOfDay },
+                status: "Delivered",
+              },
+            },
+            { $group: { _id: null, totalRevenue: { $sum: "$total" } } },
+          ]);
+        
+          const revenue = todayRevenue.length > 0 ? todayRevenue[0].totalRevenue : 0;
+        
+          const TotalRevenue = await Order.aggregate([
+            {
+              $match: { status: "Delivered" },
+            },
+            { $group: { _id: null, Revenue: { $sum: "$total" } } },
+          ]);
+        
+          const Revenue = TotalRevenue.length > 0 ? TotalRevenue[0].Revenue : 0;
+  
+          console.log(TotalRevenue);
+        
+          const Orderpending = await Order.countDocuments({ status: "Pending" });
+          const OrderReturn = await Order.countDocuments({
+            status: "Returned",
+          });
+          const Ordershipped = await Order.countDocuments({ status: "Shipped" });
+        
+          const Ordercancelled = await Order.countDocuments({
+            status: "Cancelled",
+          });
+        
+          const salesCountByMonth = await Order.aggregate([
+            {
+              $match: {
+                status: "Delivered",
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  month: { $month: "$createdAt" },
+                  year: { $year: "$createdAt" },
+                },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                month: "$_id.month",
+                year: "$_id.year",
+                count: 1,
+              },
+            },
+          ]);
+        
+          console.log(salesCountByMonth);
+        
+          res.render("indexAdmin", {
+            todaySales,
+            totalsales,
+            revenue,
+            Revenue,
+            Orderpending,
+            Ordershipped,
+            Ordercancelled,
+            salesCountByMonth,
+            OrderReturn,
+            chartLabels: JSON.stringify(chartLabels),
+            chartData: JSON.stringify(chartData)
+          });
+        } else {
+          res.render("signinAdmin");
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 // GET render Admin products view page
 
 exports.adminProducts = async (req,res) =>{
