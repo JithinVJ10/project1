@@ -5,6 +5,40 @@ const Catagory = require("../model/add_catagery")
 const sharp = require("sharp")
 
 
+// GET render Admin products view page
+
+exports.adminProducts = async (req,res) =>{
+  if (req.session.admin) {
+      try {
+          const products = await Product.find()
+          
+          res.render('productAdmin', { products });
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Server error' });
+        }
+      
+  }else{
+      res.redirect('/admin')
+  }
+}
+
+// admin add product page rendering GET
+
+exports.addProduct = async (req,res) =>{
+  if (req.session.admin) {
+      try {
+          const catagory = await Catagory.find()
+
+          res.render("add-products",{catagory})
+      } catch (err) {
+          console.log(err);
+          res.status(500).send('Server error')
+      }
+  }else{
+      res.redirect('/admin')
+  }
+}
 
 
 exports.addproduct = async (req,res)=>{
