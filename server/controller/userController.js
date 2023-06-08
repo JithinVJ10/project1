@@ -538,11 +538,12 @@ exports.singleOrderDetails = async (req,res)=>{
       const user = req.session.user
       const id = req.params.id
 
-      const order = await Order.findById(id)
+      const order = await Order.findById(id).populate('user').populate('items.product').populate('items.quantity')
 
-      res.render("Single-orderDetails",{order})
+      res.render("Single-orderDetails",{order, user})
     } catch (error) {
-      res.sent("Error")
+      console.log(error);
+      res.status(500).send("Server Error")
       
     }
   }else{
