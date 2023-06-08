@@ -123,6 +123,10 @@ route.post("/UpdateProduct/:id",upload.array('photo',3),controller.updProduct)
 route.put("/block-Product/:id",controller.blockProduct)
 route.put("/unblock-Product/:id",controller.unBlockProduct)
 
+// sales reports
+
+route.get("/sales-report",adminController.SalesReport)
+route.post("/adminSalesReportFilter",adminController.FilterbyDates)
 
 
 route.get("/error-404",(req,res)=>{

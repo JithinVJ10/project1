@@ -350,3 +350,34 @@ exports.adminOrderDetails = async (req,res)=>{
     }
 
 }
+
+// Sales reports
+
+exports.SalesReport=async(req,res)=>{
+  if(req.session.admin){
+    try {
+      const admin=req.session.admin
+      const filteredOrders=await Order.find().populate("user").populate("items.product").populate("address")
+      console.log(filteredOrders,"hhhdhdhh");
+      res.render("sales-report",{admin,filteredOrders})
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).sent("Server Error")
+    }
+  }else{
+    res.redirect("/admin")
+  }
+
+}
+
+exports.FilterbyDates=async(req,res)=>{
+  const admin=req.session.admin
+  const FromDate=req.body.fromdate
+  console.log(FromDate);
+  const Todate=req.body.todate
+  console.log(Todate);
+  const filteredOrders=await Order.find({createdAt:{$gte:FromDate,$lte:Todate}}).populate("user").populate("items.product").populate("address")
+ 
+  res.render("sales-report",{admin,filteredOrders})
+}
