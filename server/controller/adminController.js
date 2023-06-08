@@ -328,6 +328,7 @@ exports.updateOrder = async (req , res)=>{
     }
 }
 
+// Admin single Order details page
 exports.adminOrderDetails = async (req,res)=>{
 
     if (req.session.admin) {
