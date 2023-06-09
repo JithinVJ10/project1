@@ -128,6 +128,13 @@ route.put("/unblock-Product/:id",controller.unBlockProduct)
 route.get("/sales-report",adminController.SalesReport)
 route.post("/adminSalesReportFilter",adminController.FilterbyDates)
 
+// coupons
+
+route.get("/adminCoupon", adminController.adminCoupon)
+route.get("/addCoupon",adminController.addCoupon)
+route.post("/addCoupon",adminController.addCouponPost)
+route.get("/deleteCoupon/:id",adminController.deleteCoupon)
+
 
 route.get("/error-404",(req,res)=>{
     if (req.session.admin) {
