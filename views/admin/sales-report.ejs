@@ -116,6 +116,11 @@
         .date-filter-form input[type="submit"] {
             margin-left: 10px;
         }
+        .custom-button {
+            background-color: coral;
+            color: azure;
+
+        }
     </style>
 
     <div class="row tm-content-row m-2 mt-3">
@@ -155,13 +160,14 @@
                         <div class="col-sm-12 col-md-6"></div>
                         <div class="col-sm-12 col-md-6"></div>
                     </div>
-                    <table class="table table-bordered" style="width: 100%" id="productTable">
+                    <table class="table table-bordered" style="width: 100%" id="productTable" >
 
                         <thead>
                         <tr>
                             <th scope="col">Date</th>
                             <th scope="col">Order Id</th>
                             <th scope="col">User Name</th>
+                            <th scope="col">Products</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Price</th>
                             <th scope="col">Payment Method</th>
@@ -179,6 +185,13 @@
                             <td>
                             <%= order.user?.name %>
                             </td>
+                            <td>
+                                <% order.items.forEach((item) => { %>
+                                <div>
+                                    <%= item.product.name %>
+                                </div>
+                                <% }) %>
+                                </td>
                             <td>
                             <% order.items.forEach((item) => { %>
                             <div>
@@ -218,8 +231,20 @@
             var dataTable = new DataTable(productTable, {
                 dom: 'Bfrtip',
                 buttons: [
-                'csv', 'print', 'pdf'
+                    {
+                        extend: 'csv',
+                        className: 'text-danger'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'text-danger'
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'text-danger'
+                    }
                 ]
+
             });
             });
 
