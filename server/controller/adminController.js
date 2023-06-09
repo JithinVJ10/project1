@@ -2,6 +2,7 @@ const Order = require("../model/order_model")
 const Product = require("../model/product_model")
 const Catagory = require("../model/add_catagery")
 const userData = require("../model/model")
+const Coupon = require("../model/coupon-model")
 
 // GET method ADMIN dashboard Rendering with Sales report "/admim"
 
@@ -380,4 +381,84 @@ exports.FilterbyDates=async(req,res)=>{
   const filteredOrders=await Order.find({createdAt:{$gte:FromDate,$lte:Todate}}).populate("user").populate("items.product").populate("address")
  
   res.render("sales-report",{admin,filteredOrders})
+}
+
+
+// coupon get method
+
+exports.adminCoupon = async (req,res)=>{
+  if (req.session.admin) {
+    try {
+      const coupons = await Coupon.find()
+      res.render("adminCoupon",{coupons})
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error")
+    }
+  }else{
+    res.redirect("/admin")
+  }
+}
+// GET add coupon page render
+exports.addCoupon = (req,res)=>{
+  if (req.session.admin) {
+    try {
+
+      
+      res.render("addCoupon")
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error")
+    }
+  }else{
+    res.redirect("/admin")
+  }
+}
+
+exports.addCouponPost = async (req,res)=>{
+  try {
+    const {code,startingdate,ExpireDate,discount} = req.body
+    
+    const coupon = new Coupon({
+      code:code,
+      startingDate:startingdate,
+      expiryDate:ExpireDate,
+      discount:discount,
+      status:false
+
+    })
+
+    await coupon.save()
+
+    res.redirect("/adminCoupon")
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error")
+  }
+}
+
+exports.deleteCoupon = async (req,res)=>{
+  try {
+
+    const id = req.params.id
+
+    const removedCoupon = await Coupon.findByIdAndRemove(id)
+
+    if (removedCoupon) {
+      // Category deleted successfully
+      console.log("Coupon del successfully");
+      res.json({ success: true });
+    } else {
+      // Category not found or failed to delete
+      console.log("Coupon del failed");
+      res.json({ success: false });
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error")
+
+  }
 }
