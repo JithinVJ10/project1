@@ -18,6 +18,10 @@ const cartScheme = new mongoose.Schema({
             default: 1,
         }
     }],
+    total: {
+        type: Number,
+  
+    },
 },{timestamps:true})
 
 const Cart = mongoose.model("cart",cartScheme)
