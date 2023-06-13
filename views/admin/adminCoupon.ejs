@@ -109,6 +109,13 @@
                                                 <td><%= coupon.discount %></td>
                                                 <td><%= coupon.status %></td>
                                                 <td><a href="#" onclick="confirmDelete(event, '<%= coupon._id %>')"><i class="fas fa-times"></i> </a></td>
+                                                <td>
+                                                    <% if (coupon.status) { %>
+                                                        <a href="" class="btn btn-danger" onclick="confirmDeactivate(event,'<%= coupon._id %>','<%= coupon.code %>')">Deactivate</a>
+                                                    <% } else { %>
+                                                        <a href="" class="btn btn-success" onclick="confirmActivate(event,'<%= coupon._id %>','<%= coupon.code %>')">Activate</a>
+                                                    <% } %>
+                                                </td>
                                                      
                                             </tr>
                                         <% }) %>
@@ -177,6 +184,80 @@
           });
         }
       </script>
+
+<!-- Coupon confirmActivate confirmDeactivate -->
+
+        <script>
+            function confirmActivate(event,orderId,CouponCode){
+                event.preventDefault()
+
+                swal({
+                    title: "Comfirmation",
+                    text:`Are you sure you want to Activate  ${CouponCode}?`,
+                    icon:"warning",
+                    buttons:["Cancel", "Activate"],
+                    dangerMode:true
+                }).then((comfirm) =>{
+                    if (comfirm) {
+                        activateCoupon(orderId,CouponCode)
+                    }
+                })
+
+            }
+
+            function confirmDeactivate(event,orderId,CouponCode){
+                event.preventDefault()
+
+                swal({
+                    title: "Comfirmation",
+                    text:`Are you sure you want to Deactivate  ${CouponCode}?`,
+                    icon:"warning",
+                    buttons:["Cancel", "Deactivate"],
+                    dangerMode:true
+                }).then((comfirm) =>{
+                    if (comfirm) {
+                        DeactivateCoupon(orderId,CouponCode)
+                    }
+                })
+
+            }
+
+            function activateCoupon(orderId,CouponCode){
+                $.ajax({
+                    url:`/activateCoupon/${orderId}`,
+                    method:"PUT",
+                    success: ()=>{
+                        swal("success",`${CouponCode} coupon active successfully`, "success").then(()=>{
+                            location.reload()
+                        })
+                    },
+                    error: ()=>{
+                        swal("Error", `Failed to Activate ${CouponCode}`, "error")
+                    }
+                })
+            }
+
+            function DeactivateCoupon(orderId,CouponCode){
+                $.ajax({
+                    url:`/DeactivateCoupon/${orderId}`,
+                    method:"PUT",
+                    success: ()=>{
+                        swal("success",`${CouponCode} Deactivate Coupon successfully`, "success").then(()=>{
+                            location.reload()
+                        })
+                    },
+                    error: ()=>{
+                        swal("Error", `Failed to Deactivate ${CouponCode}`, "error")
+
+                    }
+                })
+
+            }
+
+
+        </script>
+
+
 
 
 
