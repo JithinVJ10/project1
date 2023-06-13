@@ -510,8 +510,7 @@
 							 </div>
 							 <% }); %>
 								<div class="discount-code">
-								   <p style="font-weight: bold;font-size: 15px;">Have a discount ? <a 
-										 href="#!">enter it here</a></p>
+								   <p style="font-weight: bold;font-size: 15px;">Have a discount ? <a data-toggle="modal" data-target="#coupon-modal" href="#!">enter it here</a></p>
 								</div>
 								<ul class="summary-prices">
 								   <li>
@@ -561,6 +560,33 @@
             </div>
          </div>
       </div>
+
+	  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header" style="text-align: center;">
+		  <h2 class="modal-title" id="exampleModalLabel" style="font-weight: bold; color: black;">Available Coupon</h2>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		 
+			<% coupon.forEach(element => { %>
+			  <% if (!(new Date(element.date) < new Date()) || element.status !== true) { %>
+				<p style="color: black; font-family: 'Times New Roman', Times, serif; font-weight: bolder;"><%= element.code %></p>
+			  <% } %>
+			<% }) %>
+		
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-main" data-dismiss="modal"  style="color:beige">Close</button>
+	   
+		</div>
+	  </div>
+	</div>
+  </div>
 
 
             <!-- ============ Main ============ -->
