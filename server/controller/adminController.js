@@ -488,3 +488,13 @@ exports.addBannerGet = (req,res)=>{
     res.redirect("/admin")
   }
 }
+
+exports.newBannerPost = async (req,res) =>{
+  try {
+    const {name,photo,date} = req.body
+    
+  } catch (error) {
+    console.log(error);
+    res.redirect("/error-404")
+  }
+}

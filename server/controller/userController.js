@@ -3,6 +3,7 @@ const Cart = require('../model/cart_model')
 const Product = require('../model/product_model')
 const Order = require("../model/order_model")
 const paypal=require('paypal-rest-sdk')
+const Coupon = require("../model/coupon-model")
 
 // Add to cart fuction
 exports.addToCart = async (req,res)=>{
@@ -260,6 +261,8 @@ exports.addAddress = async (req, res) => {
           { address: { $elemMatch: { _id: id } } }
         )
 
+        const coupon = await Coupon.find()
+
         const cart = await Cart.findOne({userId:user}).populate("products.productId")
 
   
@@ -267,7 +270,7 @@ exports.addAddress = async (req, res) => {
           const address = user.address[0]; // Get the first (and only) address matching the query
   
           console.log(address);
-          res.render('checkout',{user,cart,address});
+          res.render('checkout',{user,cart,address,coupon});
         } else {
           res.status(404).send('Address not found');
         }
@@ -531,6 +534,74 @@ exports.ordersDetails = async (req,res)=>{
     res.redirect("/login")
   }
 }
+
+// coupon 
+
+exports.redeemCoupon = async (req, res) => {
+  const { coupon } = req.body;
+  const userId = req.session.user?._id
+
+  const couponFind = await Coupon.findOne({ code: coupon });
+  const userCoupon = await userData.findOne({_id:userId});
+
+  if (userCoupon.coupon.includes(coupon)) {
+    return res.json({
+      success: false,
+      message: 'Coupon Already used'
+    });
+  }
+
+  userCoupon.coupon.push(coupon);
+  await userCoupon.save();
+
+  if (!couponFind || couponFind.status === false) {
+    return res.json({
+      success: false,
+      message: couponFind ? 'Coupon Deactivated' : 'Coupon not found'
+    });
+  }
+
+  const currentDate = new Date();
+  const expirationDate = new Date(couponFind.date);
+
+  if (currentDate > expirationDate) {
+    return res.json({
+      success: false,
+      message: 'Coupon Expired'
+    });
+  }
+
+  const amount = couponFind.discount;
+
+  res.json({
+    success: true,
+    message: 'Coupon available',
+    couponFind,
+    amount: parseInt(amount)
+  });
+
+
+  try {
+    
+    const cart = await cartSchema.findOne({userId:userId})
+   cart.total=amount
+   
+    if (!cart) {
+console.log("Cart not found");
+      return; // or throw an error
+    }
+  
+    cart.total = amount;
+
+    await cart.save();
+
+  } catch (error) {
+    console.error("Error updating cart:", error);
+    // handle the error appropriately
+  }
+  
+
+};
 
 exports.singleOrderDetails = async (req,res)=>{
   if (req.session.user) {

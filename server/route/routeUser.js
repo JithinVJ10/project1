@@ -283,6 +283,9 @@ route.get("/order-return/:id",UserControl.orderReturn)
 route.get('/paypal-success',UserControl.paypal_success)
 route.get('/paypal-success',UserControl.paypal_err)
 
+// COUPON
+route.post("/redeem_coupon",UserControl.redeemCoupon)
+
 
 
 

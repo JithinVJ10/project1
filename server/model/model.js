@@ -30,7 +30,8 @@ let userSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
-    }
+    },
+    coupon:[String],
 })
 
 const userData = mongoose.model("userdata",userSchema)

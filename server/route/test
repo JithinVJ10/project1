@@ -1,0 +1,6 @@
+			// <% coupon.forEach(element => { %>
+			//   <% if (!(new Date(element.date) < new Date()) || element.status !== true) { %>
+			// 	<p style="color: black; font-family: 'Times New Roman', Times, serif; font-weight: bolder;"><%= element.code %></p>
+			//   <% } %>
+			// <% }) %>
+		
