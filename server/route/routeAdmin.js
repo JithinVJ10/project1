@@ -134,6 +134,8 @@ route.get("/adminCoupon", adminController.adminCoupon)
 route.get("/addCoupon",adminController.addCoupon)
 route.post("/addCoupon",adminController.addCouponPost)
 route.get("/deleteCoupon/:id",adminController.deleteCoupon)
+route.put("/activateCoupon/:id",adminController.activateCoupon)
+route.put("/DeactivateCoupon/:id",adminController.deactivateCoupon)
 
 // Banner
 
