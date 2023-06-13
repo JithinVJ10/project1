@@ -463,6 +463,55 @@ exports.deleteCoupon = async (req,res)=>{
   }
 }
 
+// coupon Activate PUT
+exports.activateCoupon = async (req,res)=>{
+  try {
+    const {id} =req.params
+    
+
+    const coupon = await Coupon.findByIdAndUpdate(id,
+      {status:true},{new:true}
+    )
+
+    if(coupon){
+      console.log("coupon active");
+      res.json({ success: true })
+    }
+    else{
+      console.log("Faild");
+      res.json({ success: false, message: "product not found" });
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error")
+  }
+}
+
+// coupon Deactivate PUT
+exports.deactivateCoupon = async (req,res)=>{
+  try {
+    const id = req.params.id
+
+    const coupon = await Coupon.findByIdAndUpdate(id,
+      {status:false},{new:true}
+    )
+
+    if(coupon){
+      console.log("coupon Deactive");
+      res.json({ success: true })
+    }
+    else{
+      console.log("Failed");
+      res.json({ success: false, message: "product not found" });
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error")
+  }
+}
+
 exports.adminBanner = (req,res) =>{
   if(req.session.admin){
     try {
