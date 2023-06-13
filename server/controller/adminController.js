@@ -462,3 +462,29 @@ exports.deleteCoupon = async (req,res)=>{
 
   }
 }
+
+exports.adminBanner = (req,res) =>{
+  if(req.session.admin){
+    try {
+      res.render("adminBanner")
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Error")
+    }
+  }else{
+    res.redirect("/admin")
+  }
+}
+
+exports.addBannerGet = (req,res)=>{
+  if(req.session.admin){
+    try {
+      res.render("addBanner")
+    } catch (error) {
+      console.log(error);
+      res.status(404).sent("Network Error")
+    }
+  }else{
+    res.redirect("/admin")
+  }
+}

@@ -135,6 +135,11 @@ route.get("/addCoupon",adminController.addCoupon)
 route.post("/addCoupon",adminController.addCouponPost)
 route.get("/deleteCoupon/:id",adminController.deleteCoupon)
 
+// Banner
+
+route.get("/adminBanner",adminController.adminBanner)
+route.get("/addBanner",adminController.addBannerGet)
+
 
 route.get("/error-404",(req,res)=>{
     if (req.session.admin) {
