@@ -314,6 +314,8 @@ exports.placeorder = async (req,res)=>{
       const cart = await Cart.findOne({userId: userId}).populate("products.productId")
       cart ? console.log(cart) : console.log("Cart not found");
 
+      const discount = cart.discount
+
       const items = cart.products.map(item =>{
         const product = item.productId;
         const quantity = item.quantity;
@@ -339,6 +341,10 @@ exports.placeorder = async (req,res)=>{
       items.forEach((item) => {
         totalPrice += item.price * item.quantity;
       });
+
+      if(discount){
+        totalPrice -= discount
+      }
 
       if(payment == "COD"){
 
@@ -583,14 +589,14 @@ exports.redeemCoupon = async (req, res) => {
   try {
     
     const cart = await Cart.findOne({userId:userId})
-    cart.total=amount
+    cart.discount=amount
    
     if (!cart) {
       console.log("Cart not found");
       return; // or throw an error
     }
   
-    cart.total = amount;
+    cart.discount = amount;
 
     await cart.save();
 
