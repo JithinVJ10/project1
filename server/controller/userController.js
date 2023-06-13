@@ -551,15 +551,14 @@ exports.redeemCoupon = async (req, res) => {
     });
   }
 
-  userCoupon.coupon.push(coupon);
-  await userCoupon.save();
-
   if (!couponFind || couponFind.status === false) {
     return res.json({
       success: false,
       message: couponFind ? 'Coupon Deactivated' : 'Coupon not found'
     });
   }
+  userCoupon.coupon.push(coupon);
+  await userCoupon.save();
 
   const currentDate = new Date();
   const expirationDate = new Date(couponFind.date);
@@ -583,11 +582,11 @@ exports.redeemCoupon = async (req, res) => {
 
   try {
     
-    const cart = await cartSchema.findOne({userId:userId})
-   cart.total=amount
+    const cart = await Cart.findOne({userId:userId})
+    cart.total=amount
    
     if (!cart) {
-console.log("Cart not found");
+      console.log("Cart not found");
       return; // or throw an error
     }
   
