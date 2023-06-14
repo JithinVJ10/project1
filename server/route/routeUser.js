@@ -209,7 +209,8 @@ route.get("/user-profile", async (req,res)=>{
             const userdetails = await userData.findOne({_id:id})
             res.render("User-profile",{userdetails})
         } catch (error) {
-            
+            console.log(error);
+            res.status(500).send("Server Error")
         }
         
     }else{
@@ -277,6 +278,8 @@ route.get("/orders-details",UserControl.ordersDetails)
 route.get("/singleOrderDetails/:id",UserControl.singleOrderDetails)
 route.get("/order-cancel/:id",UserControl.orderCancel)
 route.get("/order-return/:id",UserControl.orderReturn)
+// Invoice page render
+route.get("/invoice/:id",UserControl.invoice)
 
 
 // PAYPAL GET route
@@ -285,6 +288,9 @@ route.get('/paypal-success',UserControl.paypal_err)
 
 // COUPON
 route.post("/redeem_coupon",UserControl.redeemCoupon)
+
+// Wallet
+route.get("/wallet",UserControl.wallet)
 
 
 
