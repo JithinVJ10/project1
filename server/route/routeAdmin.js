@@ -101,7 +101,6 @@ route.get("/user-admin",adminController.adminUser)
 // User block and unblock
 
 route.put("/block-user/:id", adminController.blockUser)
-
 route.put("/unblock-user/:id", adminController.unBlockUser)
 
 
