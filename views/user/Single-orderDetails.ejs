@@ -153,100 +153,126 @@
 
 			<!-- ============ Main ============ -->
 
-			<div class="table-responsive">
-				<table class="table text-start align-middle table-bordered table-hover mb-0">
-					<p class="text-right text-muted">Return only available for 3 days after delivery*</p>
-					<thead>
-						
-						<tr class="text-dark">
-							
-							<th scope="col">Date</th>
-							<th scope="col">Order ID</th>
-							<th scope="col">Product name</th>
-							<th scope="col">Amount</th>
-							<th scope="col">Address</th>
-							<th scope="col">Image</th>
-							<th scope="col">Payment Method</th>
-							<th scope="col">Status</th>
-							<th scope="col">Cancel/Return</th>
-
-						</tr>
-					</thead>
-					<tbody>
-						<tr> 
-							<td><%= order.createdAt.toLocaleDateString() %></td>
-							<td><%= order._id%></td>
-							<td>
-								<% order.items.forEach((item,index) =>{ %>
-
-									<%= index+1 %>. <%= item.product.name %> <br>
-								<% }) %>
-							</td>
-							<td>₹<%= order.total %></td>
-							<td>
-								<%= order.address.name %><br>
-								<%= order.address.mobile %><br>
-								<%= order.address.address %><br>
-								<%= order.address.city %><br>
-							</td>
-							<td>
-								<% order.items.forEach((item,index) =>{ %>
+			<style>
+				.gradient-custom {
+				
+					background: #ffffff;
+				   
+					background: -webkit-linear-gradient(to top left, rgb(255, 255, 255), rgb(255, 255, 255));
+					/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+					background: linear-gradient(to top left, rgb(255, 255, 255), rgb(255, 255, 255))
+				}
+			</style>
+			<div class="container">
+				<section class=" gradient-custom">
+					<div class="container py-5 h-100">
+						<div class="row d-flex justify-content-center align-items-center h-100">
+							<div class="col-lg-10 col-xl-8">
+								<div class="card" style="border-radius: 10px;">
+									<div class="card-header px-4 py-5" style="height: 100px; background-color: rgb(22, 21, 21); display: flex; align-items: center; justify-content: space-between;">
+										<h5 style="text-align: center; color: #ffffff; flex-grow: 1;">
+										  Order Details <span style="font-weight: bolder; font-size: 15px;"><%= user.name %></span>!
+										</h5>
+										<div style="text-align: right;">
+											<a href="/invoice/<%= order._id %>" style="color: beige; font-weight: bolder;"><button class="btn btn-success">Invoice</button></a>
+										</div>
+									  </div>
+									  
+									  
+									  
 									
-									<img src="<%= item.product.photo[0] %>" alt="" width="40px" class="img-thumbnail"> <br>
-								<% }) %>
-							</td>
-							<td><%= order.payment_method %></td>
-							<td>
-								<b><%= order.status %></b>
-							</td>
-
-							
-
-								<td>
-									<% if (order.status === 'Delivered' && !order.returnExpired) { %>
-										<a class="btn btn-sm btn-primary" href="" data-toggle="modal" data-target="#exampleModal<%= order._id %>">Return</a>
-									  <% } else if (order.status !== "Cancelled" && order.status !== "Delivered") { %>
-										<a class="btn btn-sm btn-primary" href="" data-toggle="modal" data-target="#exampleModal<%= order._id %>">Cancel</a>
-									  <% } else if(order.returnExpired){ %>
-										<p>Return Not available</p>
-									  <% } %>
-								</td>
-								
-							
-						</tr>
-					   </a>
-					  
-
-					</tbody>
-				</table>
-
+								 
+									<div class="card-body p-4">
+								 
+										<div class="d-flex justify-content-between align-items-center mb-4">
+											<p class="lead fw-normal mb-0" style="color: #000000;">Receipt</p>
+										
+			
+										</div>
+										<p class="bold ms-sm-3"  >Order Id: <%= order._id %></p>
+									
+										<% if (order && order.items) { %>
+											<% order.items.forEach((item, index) => { %>
+												<div class="card shadow-sm border-radius mb-4 ms-sm-3 me-3">
+													<div class="card-body">
+														<div class="row">
+															
+															<div class="col-md-2 d-flex justify-content-center align-items-center" >
+																<img style="height: 100px;" src="/<%= item.product.photo[0] %>" class="img-fluid" alt="Phone">
+															</div>
+															<div class="col-md-2 text-center d-flex justify-content-center align-items-center" style="margin-top: 28px; font-weight: bolder;" >
+																<p class="text-muted mb-0 small">Product Name: <%= item.product.name %></p>
+															</div>
+															<div class="col-md-2 text-center d-flex justify-content-center align-items-center" style="margin-top: 28px; font-weight: bolder;" >
+																<p class="text-muted mb-0 small">Category<br><%= item.product.catagory %></p>
+															</div>
+															<div class="col-md-2 text-center d-flex justify-content-center align-items-center" style="margin-top: 28px; font-weight: bolder;" >
+																<p class="text-muted mb-0 small">Qantity: <%= item.quantity %></p>
+															</div>
+															<div class="col-md-2 text-center d-flex justify-content-center align-items-center" style="margin-top: 28px; font-weight: bolder;" >
+																<p class="text-muted mb-0 small">Price: $<%= item.price %></p>
+															</div>
+														</div>
+													</div>
+												</div>	
+											<% }) %>
+										<% } %>   
+												
+									</div>
+									
+								<div class="m-sm-3">
+									<div >
+										<h4>Order Status: <span style="font-weight: bolder;">  <%= order.status %> </span>  </h4>
+									</div>
+									<div class="container">
+										<div class="d-flex justify-content-between pt-2  " style="display: flex;" >
+											<div style="width: 50%;">
+											<p class="fw-bold mb-0" style="margin-top: 50px;margin-left: -18px; font-size: larger;font-weight: bolder; color: black; ">Order Details</p>    
+											</div>
+										<div style="width: 50%; margin-top: 50px; margin-left: 320px;">
+											<p class="text-muted mb-0"><span class="fw-bold me-4" style="font-weight: bold; color: rgba(31, 30, 30, 0.582);">Total :</span> ₹<%= order.total %></p>
+										</div>
+										</div>
+									
+									
+									</div>
+									
+									<div class="d-flex justify-content-between pt-2">
+														
+										<p class="text-muted mb-0">Delivery Address Details :</p>
+										
+											
+											<p> Name: <%= order.address.name %> </p><br>
+											<p>City: <%= order.address.city %> </p><br>
+											<p>  State: <%= order.address.state %> </p><br>
+											<p> Pincode: <%= order.address.pincode %> </p>
+												
+									
+											
+										
+									</div>
+								</div>
+								<div class="card-footer border-0 px-4 py-5"
+								style="background-color: #111111; border-bottom-left-radius: 10px; height: 60px; display: flex; justify-content: flex-end; align-items: center;">
+							  
+							   <h3 class="text-white text-uppercase mb-0" style="color: beige;">
+								   Total Amount:&nbsp;&nbsp;&nbsp;<span class="h2 mb-0 ms-2">₹<%= order.total %></span>
+							   </h3>
+						   </div>
+						 
+							</div>
+						  
+						</div>
+					 
+					</div>
 				
 			</div>
-		</div>
-	</div>
+			</section>
+			</div>
 
-	<div class="modal fade" id="exampleModal<%= order._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-			<h5 class="modal-title" id="exampleModalLabel">Comfirm</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-			</div>
-			<div class="modal-body">
-			Are you Sure?
-			</div>
-			<div class="modal-footer">
-			
-			<% if (order.status === 'Delivered' && !order.returnExpired) { %>
-				<a class="btn btn-sm btn-primary" href="/order-return/<%= order._id %>">Return Order</a>
-			  <% } else if (order.status !== "Cancel" && order.status !== "Delivered" && order.status !== "Returned") { %>
-				<a class="btn btn-sm btn-primary" href="/order-cancel/<%= order._id %>">Cancel Order</a>
-			  <% } %>
-			  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			</div>
-		</div>
+
+
+			<!-- main -->
 		</div>
 	</div>
 
