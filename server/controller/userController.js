@@ -2,8 +2,9 @@ const userData = require('../model/model')
 const Cart = require('../model/cart_model')
 const Product = require('../model/product_model')
 const Order = require("../model/order_model")
-const paypal=require('paypal-rest-sdk')
+const paypal= require('paypal-rest-sdk')
 const Coupon = require("../model/coupon-model")
+const Wallet = require("../model/wallet-model")
 
 // Add to cart fuction
 exports.addToCart = async (req,res)=>{
@@ -161,11 +162,13 @@ exports.decreaseQuantity = async (req, res) => {
           // getting id of current user
             const userId = req.session.user?._id
 
+            const user = req.session.user
+
             // id have to pass with object
             const data = await userData.findOne({_id:userId})
 
 
-            res.render("User-address", {data: data.address})
+            res.render("User-address", {data: data.address, user})
         } catch (error) {
             console.log(error);
             res.status(500).send("Network Error")
@@ -255,19 +258,20 @@ exports.addAddress = async (req, res) => {
       try {
         const id = req.params.id;
         const userId = req.session.user?._id; 
+        const user = req.session.user
   
-        const user = await userData.findOne(
+        const userdata = await userData.findOne(
           { _id: userId },
           { address: { $elemMatch: { _id: id } } }
         )
 
         const coupon = await Coupon.find()
 
-        const cart = await Cart.findOne({userId:user}).populate("products.productId")
+        const cart = await Cart.findOne({userId:userdata}).populate("products.productId")
 
   
-        if (user) {
-          const address = user.address[0]; // Get the first (and only) address matching the query
+        if (userdata) {
+          const address = userdata.address[0]; // Get the first (and only) address matching the query
   
           console.log(address);
           res.render('checkout',{user,cart,address,coupon});
@@ -567,7 +571,7 @@ exports.redeemCoupon = async (req, res) => {
   await userCoupon.save();
 
   const currentDate = new Date();
-  const expirationDate = new Date(couponFind.date);
+  const expirationDate = new Date(couponFind.expiryDate);
 
   if (currentDate > expirationDate) {
     return res.json({
@@ -639,7 +643,29 @@ exports.orderCancel = async (req,res) =>{
 
     console.log(order);
 
-    res.redirect("/orders-details")
+    const wallet = await Wallet.findOne({userId:order.user})
+    if(wallet){
+      wallet.balance += order.total
+      wallet.transactions.push(order.payment_method)
+
+      await wallet.save()
+    }else{
+      const newWallet = new Wallet({
+        userId: order.user,
+        orderId: order._id,
+        balance: order.total,
+        transactions: [order.payment_method]
+      })
+      await newWallet.save()
+    }
+
+    await Order.updateOne({ _id: id }, { $set: { status: 'Refunded Amount' } });
+
+    if (order) {
+      res.redirect("/orders-details")
+    }
+
+    
   } catch (error) {
     console.log(error);
     res.status(501).send("Server Error")
@@ -663,4 +689,50 @@ exports.orderReturn = async (req,res) =>{
   }
 
 }
+// Invoice page render GET
+exports.invoice = async (req,res)=>{
+  if(req.session.user){
+    try {
+      const {id}= req.params
+      const user = req.session.user
 
+      const order = await Order.findById(id).populate('user').populate('items.product').populate('items.quantity')
+
+      res.render("invoice",{order,user})
+
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error")
+    }
+  }else{
+    res.redirect("/")
+  }
+}
+
+// Wallet page render GET
+exports.wallet = async (req,res) =>{
+  if(req.session.user){
+    try {
+      const userId = req.session.user?._id
+      const user = req.session.user
+      let sum = 0
+
+      const walletbalance = await Wallet.findOne({ userId: userId }).populate('orderId');
+      const orderdetails = await Order.find({ user: userId , status: "Refunded Amount" }).populate('items.product');
+
+      if (walletbalance) {
+        sum += walletbalance.balance;
+      }
+
+      
+      res.render("wallet", { user, wallet: walletbalance?.orderId, sum, walletbalance, orderdetails })
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error")
+    }
+  }else{
+    res.redirect("/login")
+  }
+}
