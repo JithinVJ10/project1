@@ -284,7 +284,7 @@
                                     	<td>
 											<% if (orders.status === 'Delivered' && !orders.returnExpired) { %>
 												<a class="btn btn-sm btn-primary" href="" data-toggle="modal" data-target="#exampleModal<%= orders._id %>">Return</a>
-											  <% } else if (orders.status !== "Cancelled" && orders.status !== "Delivered") { %>
+											  <% } else if (orders.status !== "Cancelled" && orders.status !== "Delivered" && orders.status !== "Refunded Amount") { %>
 												<a class="btn btn-sm btn-primary" href="" data-toggle="modal" data-target="#exampleModal<%= orders._id %>">Cancel</a>
 											  <% } else if(orders.returnExpired){ %>
 												<p>Return Not available</p>
