@@ -22,6 +22,9 @@ const cartScheme = new mongoose.Schema({
         type: Number,
   
     },
+    wallet:{
+        type:Number
+    }
 },{timestamps:true})
 
 const Cart = mongoose.model("cart",cartScheme)
