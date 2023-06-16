@@ -6,7 +6,7 @@ const paypal= require('paypal-rest-sdk')
 const Coupon = require("../model/coupon-model")
 const Wallet = require("../model/wallet-model")
 
-// Add to cart fuction
+// Add to cart function
 exports.addToCart = async (req,res)=>{
   try {
     const userId = req.session.user?._id
@@ -248,6 +248,104 @@ exports.addAddress = async (req, res) => {
       return res.status(500).json({ error: 'Server error' });
     }
   };
+
+  // POST User details update in profile page
+
+  exports.userDetialsUpdate = async (req,res)=>{
+    try {
+      const {id}= req.params
+      const {name,email,mobile} = req.body
+
+      const userdetails = await userData.findByIdAndUpdate(id,{
+        name:name,
+        email:email,
+        mobile:mobile
+      })
+
+      if (userdetails) {
+        res.redirect("/user-profile")
+      }
+
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  // POST profile address update
+
+  exports.updateProfileAddress = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const userId = req.session.user?._id;
+      const { name, address, mobile, pincode, city, state } = req.body;
+      console.log(id);
+  
+      // Find the user by their ID
+      const user = await userData.findById(userId);
+      console.log(user);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Find the address to update
+      const addressToUpdate = user.address.id(id);
+      console.log(addressToUpdate);
+  
+      if (!addressToUpdate) {
+        return res.status(404).json({ error: 'Address not found' });
+      }
+  
+      // Update the address properties
+      addressToUpdate.name = name;
+      addressToUpdate.address = address;
+      addressToUpdate.mobile = mobile;
+      addressToUpdate.pincode = pincode;
+      addressToUpdate.city = city;
+      addressToUpdate.state = state;
+  
+      // Save the updated user
+      await user.save();
+  
+      res.redirect("/user-profile")
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  };
+
+  // POST add new address in profile page
+
+  exports.addAddressProfile = async (req, res) => {
+
+    try {
+        const userId = req.session.user?._id
+        const { name, address, mobile, pincode, city, state } = req.body
+    
+        // Find the user by a specific identifier
+        const user = await userData.findOne({_id:userId});
+
+        console.log(user);
+    
+        if (!user) {
+          res.status(404).send('User not found.');
+          return;
+        }
+    
+        // Push the new address data to the existing address array
+        user.address.push({ name, address, mobile, pincode, city, state });
+    
+        // Save the updated user document
+        await user.save();
+    
+        res.redirect("/user-profile")
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Error finding/updating user.');
+      }
+  };
   
 
 
@@ -288,7 +386,7 @@ exports.addAddress = async (req, res) => {
   };
 
 
-// order comfirm page after pressing place order
+// order comfirm page after pressing place order POST
 
 let paypalTotal = 0
 exports.placeorder = async (req,res)=>{
@@ -440,6 +538,8 @@ exports.placeorder = async (req,res)=>{
     const paymentId = req.query.paymentId;
     const user = req.session.user
     const userId = req.session.user?._id
+
+    // const data = await userData.findOne(userId)
   
     console.log(paypalTotal);
    
@@ -464,10 +564,8 @@ exports.placeorder = async (req,res)=>{
         console.log(error.response);
         throw error;
     } else  {
-      
-      console.log(JSON.stringify(payment));
 
-      
+      // req.session.user = data
       
       res.render("paypalSuccess",{payment,user, userId,})
     }
@@ -632,6 +730,8 @@ exports.singleOrderDetails = async (req,res)=>{
 
 }
 
+// Order Cancel and Refund to wallet GEt
+
 exports.orderCancel = async (req,res) =>{
   try {
     const id = req.params.id
@@ -672,6 +772,8 @@ exports.orderCancel = async (req,res) =>{
   }
 }
 
+// Order Return GET
+
 exports.orderReturn = async (req,res) =>{
   try {
     const id = req.params.id
@@ -689,6 +791,7 @@ exports.orderReturn = async (req,res) =>{
   }
 
 }
+
 // Invoice page render GET
 exports.invoice = async (req,res)=>{
   if(req.session.user){
@@ -719,7 +822,10 @@ exports.wallet = async (req,res) =>{
       let sum = 0
 
       const walletbalance = await Wallet.findOne({ userId: userId }).populate('orderId');
-      const orderdetails = await Order.find({ user: userId , status: "Refunded Amount" }).populate('items.product');
+      const orderdetails = await Order.find({ user: userId, status: "Refunded Amount" }).populate('items.product');
+      
+      console.log(orderdetails);
+      
 
       if (walletbalance) {
         sum += walletbalance.balance;
@@ -734,5 +840,59 @@ exports.wallet = async (req,res) =>{
     }
   }else{
     res.redirect("/login")
+  }
+}
+
+
+// Pay using Wallet balance POST
+exports.walletPay = async (req,res)=>{
+  try {
+
+    const userId = req.session.user?._id
+
+    const wallet = await Wallet.findOne({userId:userId})
+    const cart = await Cart.findOne({userId:userId}).populate("products.productId")
+
+
+    let totalPrice = 0
+    
+    const items = cart.products.map(item =>{
+      const product = item.productId;
+      const quantity = item.quantity;
+      const price = item.productId.price
+     
+     
+      totalPrice += price * quantity;
+
+    })
+
+    console.log(totalPrice,"kk q");
+    let balance = (10 / 100) * totalPrice;
+
+     let wallet_balance= wallet.balance
+      if (balance <  wallet.balance) {
+        totalPrice -= balance;
+        cart.wallet = balance;
+        await cart.save();
+
+        console.log( wallet.balance,"before");
+
+        wallet.balance-=balance
+
+        
+        await wallet.save();
+        console.log( wallet.balance,"after");
+     }
+
+     res.json({
+      success: true,
+      message: "Wallet add Successful",
+      totalPrice,
+      wallet_balance
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Server Error")
   }
 }
