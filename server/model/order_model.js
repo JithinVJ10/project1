@@ -45,6 +45,9 @@ const orderSchema = new mongoose.Schema({
   address: {
     type: Object,
     required: true,
+  },
+  reason:{
+    type: String
   }
 }, {
   toJSON: { virtuals: true },
