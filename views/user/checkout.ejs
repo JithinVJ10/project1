@@ -1,7 +1,7 @@
 <!-- include header -->
 <%- include('include/_header') %>
 <!-- /include header -->
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <body class="animsition">
 	<%- include('include/_navbar') %>
@@ -134,43 +134,82 @@
                <div class="row">
                   <div class="col-md-8">
                      <div class="block billing-details">
-                        <h4 class="widget-title">Billing Details</h4>
                         <form class="checkout-form" action="/order/<%= address._id %>" method="post">
 
-                           <div class="form-group">
-                              <label for="full_name">Full Name</label>
-                              <input type="text" name="name" class="form-control" id="full_name"
-                                 value="<%= address.name %>" placeholder="">
-                           </div>
-							<div class="form-group">
-								<label for="address">Address</label>
-								<textarea name="address" class="form-control" id="address" placeholder=""><%= address.address %></textarea>
-							</div>
-                           <div class="form-group">
-                              <label for="user_address">Phone Number</label>
-                              <input type="text" name="mobile" class="form-control" id="user_address" placeholder=""
-                                 value="<%= address.mobile %>">
-                           </div>
-                           <div class="checkout-country-code clearfix">
-                              <div class="form-group">
-                                 <label for="user_post_code">Pin Code</label>
-                                 <input type="text" name="pincode" class="form-control" id="user_post_code"
-                                    value="<%= address.pincode %>">
-                              </div>
-                              <div class="form-group">
-                                 <label for="user_city">City</label>
-                                 <input type="text" name="city" class="form-control" id="user_city"
-                                    value="<%= address.city %>">
-                              </div>
-                           </div>
-                           <div class="form-group">
-                              <label for="user_country">State</label>
-                              <input type="text" name="state" class="form-control" id="user_country" placeholder=""
-                                 value="<%= address.state %>">
-                           </div>
 
-						   <div class="block">
+						   <!-- hhshh -->
+						   <div class="mb-5 border border-secondary  shadow rounded">
+							
+								<div class="p-3 p-lg-5">
+									<h4 class="widget-title">Billing Address</h4>
+								<% if(locals.address){%>
+									<span><%= address.name %>,</span>
+									<span> <%= address.address %>,</span>
+									<span> <%= address.city %>,</span>
+									<span> <%= address.state %>,</span>
+									<span> Pin : <%= address.pincode %>,</span>
+									
+									<%} %>
+									
+								</div>
+						
+						  	</div>
+
+							<!-- products -->
+							<div class="shadow p-2 border border-secondary rounded">
+								<h3 class="p-2">Ordered products</h3>
+							<% cart.products.forEach(function(product) { %>
+								
+								<div class=" p-3">
+									<div class="zab8Yh _10k93p">
+										<div class="d-flex">
+													<div class="CXW8mj" style="height: 112px; width: 112px;">
+														<img loading="lazy" class="media-object img-thumbnail pull-left mt-4"  width="70px" alt="" src="/<%= product.productId.photo[0] %>">
+													</div>
+												</span></a>
+											<div class="_3fSRat">
+												<div class="_2-uG6-"><p><%= product.productId.name %></p></div>
+												<div class="_20RCA6"> Quantity: <%= product.quantity %> </div>
+												<div class="_3ZS8sw">
+													<span class="price">₹&nbsp;  <%= product.productId.price %></span>
+							
+												<div class="_2zbf83">
+													<ul>
+														<li>
+															<div class="_2pqhhf"> Delivery | <span><span>Free</span></span></div>
+														</li>
+													</ul>
+													<ul class="_31bLAK"></ul>
+												</div>
+												<div class="d-flex">
+													<span>Total: ₹</span>
+												<div class="total price">
+													<% var total=product.quantity * product.productId.price; %>
+												   
+												  <p id="product-total-price-<%= product.productId._id %>" class="item-total">
+													  <%= total %>
+												  </p>
+												  
+												</div>
+												</div>
+											</div>
+											
+										</div>
+
+									</div>
+								</div>
+								</div>
+								<hr>
+							<% }); %>
+							</div>
+
+						   <div class="block mt-3 shadow p-5 me-4 rounded border border-secondary">
 							<h2 class="section-title">Payment Methods</h2>
+							<div class="wallet-pay">
+								<button type="button" class="btn btn-primary" onclick="walletPay()">Use wallet</button>
+                                <span id="wallet"></span>
+                                <i id="wallet_remove" onclick="deleteWallet()"><span></span></i>
+							</div>
 							<div class="payment-methods mt-4">
 							   <div class="payment-method">
 
@@ -260,43 +299,13 @@
 
                   </div>
 
-                  <div class="col-md-4 border border-dark rounded">
+                  <div class="col-md-4 border rounded shadow p-4 border border-secondary">
 					<div class="product-checkout-details ">
 					   <div class="block pt-3 pb-3">
-						  <h4 class="widget-title">Order Summary</h4>
-
-
-						  <% cart.products.forEach(function(product) { %>
-							 <div class="media product-card ">
-
-								<a class="pull-left" href="/product-detail/<%= product.productId._id %>">
-								   <img class="media-object img-thumbnail" src="/<%= product.productId.photo[0] %>" alt="image" width="70px" />
-								</a>
-								<div class="media-body p-4">
-								   <h4 class="media-heading" style="font-weight: bold;font-size: 15px;">
-									  <%= product.productId.name %><a href="#"></a>
-								   </h4>
-								   <p class="price">
-									  ₹&nbsp;  <%= product.productId.price %>
-								   </p>
-								   <span>Quantity: <%= product.quantity %></span>
-
-								   <td class="total price">
-									  <% var total=product.quantity * product.productId.price; %>
-									 
-									<p id="product-total-price-<%= product.productId._id %>" class="item-total">
-										<%= total %>
-									</p>
-									
-								   </td>
-								   <hr>
-								   <!-- <span class="remove">Remove</span> -->
-								</div>
-
-							 </div>
-							 <% }); %>
+						  <h4 class="widget-title mb-2 p-3">Order Summary</h4>
+							 
 								<div class="discount-code">
-								   <p style="font-weight: bold;font-size: 15px;">Have a discount ? <a data-toggle="modal" data-target="#coupon-modal" href="#!">enter it here</a></p>
+								   
 								</div>
 								<div class="card">
 									<div class="card-body d-flex">
@@ -307,16 +316,14 @@
 											 <label for="couponCode" class="mr-2">Coupon Code</label>
 
 											 <input type="text" class="form-control" name="coupon"
-												id="couponCode" placeholder="Enter the coupon code">
+												id="couponCode" placeholder="Enter the coupon code" required>
 
 
 										  </div>
 
-										  <div id="couponMessage"
-											 style="padding-bottom: 10px; color: darkred;"></div>
+										  <div id="couponMessage" style="padding-bottom: 10px; color: darkred;"></div>
 
-										  <div id="couponMessage1"
-											 style="padding-bottom: 10px; color: rgb(7, 126, 13);"></div>
+										  <div id="couponMessage1" style="padding-bottom: 10px; color: rgb(7, 126, 13);"></div>
 
 										  <button type="button" onclick="redeem()"
 											 class="btn btn-primary ml-auto"
@@ -328,9 +335,9 @@
 									   </form>
 									</div>
 								 </div>
-								<ul class="summary-prices">
+								<ul class="summary-prices pt-3">
 								   <li>
-									  <span style="font-weight: bold;font-size: 15px;">Subtotal:
+									  <span style="font-weight: bold;font-size: 15px;">Subtotal: ₹
 									  </span>
 									  
 									  <span class="price" id="subtotal"></span>
@@ -339,12 +346,23 @@
 									  <span style="font-weight: bold;font-size: 15px;">Shipping:</span>
 									  <span>Free</span>
 								   </li>
+								   <li>
+									<span style="font-weight: bold;font-size: 15px;">Coupon Discount: -</span>
+									<span><%= cart.discount %></span>
+								 	</li>
+									<li>
+										<span style="font-weight: bold;font-size: 15px;">Wallet: -</span>
+										<span><%= cart.wallet %></span>
+									</li>
 								</ul>
+								<hr>
 								<div class="summary-total">
-								   <span style="font-weight: bold;font-size: 30px;">Total: </span>
+								   <span style="font-weight: bold;font-size: 30px;">Total: ₹ </span>
 								   <span id="totalprice" style="font-weight: bold;font-size: 25px;"></span>
 								
 								</div>
+								
+								<p class="text-muted pt-5">Safe and Secure Payments.Easy returns.Safe and Secure Payments.</p>
 					   </div>
 					</div>
 				 </div>
@@ -898,6 +916,53 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
 
+		</script>
+
+		<!-- wallet-pay -->
+
+		<script>
+			function walletPay(){
+
+				$.ajax({
+					url:'/wallet-pay',
+					method:'PUT',
+					success: (data)=>{
+						if (data.success) {
+							setNewTotal(data.wallet_balance)
+						}else{
+							console.log("wallet pay Error");
+						}
+
+					},
+					error: (xhr, status, error) =>{
+						console.error('Coupon request failed. Status:', status);
+					}
+				})
+
+			}
+
+			const setNewTotal = (walletBalance) => {
+            const itemTotal = parseInt(document.getElementById('totalprice').innerHTML);
+            console.log(itemTotal);
+
+            let sum = (10 / 100) * itemTotal
+            console.log(sum);
+
+            if (walletBalance > sum) {
+               newtotal = (itemTotal - sum)
+
+            } else {
+               return alert('wallet Amount insufficient')
+            }
+
+            document.getElementById('wallet').innerHTML = ` wallet amount - ${sum}`;
+            document.getElementById('wallet_remove').innerHTML = `<i class="fa fa-times"></i>`;
+            document.getElementById('wallet').style.display = 'block';
+            document.getElementById('wallet_remove').style.display = 'inline';
+
+
+            document.getElementById('totalprice').innerHTML = ` ${newtotal}`;
+         }
 		</script>
 <!--===============================================================================================-->
 	<script src="/assetUser/js/main.js"></script>
