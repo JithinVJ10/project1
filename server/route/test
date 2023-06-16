@@ -1,6 +1,41 @@
-			// <% coupon.forEach(element => { %>
-			//   <% if (!(new Date(element.date) < new Date()) || element.status !== true) { %>
-			// 	<p style="color: black; font-family: 'Times New Roman', Times, serif; font-weight: bolder;"><%= element.code %></p>
-			//   <% } %>
-			// <% }) %>
-		
+<% cart.products.forEach(function(product) { %>
+<div class="_1AtVbE col-12-12">
+    <div class="zab8Yh _10k93p">
+        <div class="_2nQDXZ">
+                    <div class="CXW8mj" style="height: 112px; width: 112px;"><img loading="lazy" class="_396cs4" alt="" src="/<%= product.productId.photo[0] %>">
+                    </div>
+                </span></a>
+            <div class="_3fSRat">
+                <div class="_2-uG6-"><p><%= product.productId.name %></p></div>
+                <div class="_20RCA6"> Quantity: <%= product.quantity %> </div>
+                <div class="_3ZS8sw">Seller:DUROFEEL
+                    <span class="price">₹&nbsp;  <%= product.productId.price %></span>
+                <div class="_3zPVJV">
+                    <div class="ebO6Mt" id="offers-LSTBEMGBFCMQCBRUVRFHGFT9L"></div>
+                </div>
+            </div>
+            <div class="_2zbf83">
+                <ul class="_1ZEsQ4">
+                    <li class="JEy4SL">
+                        <div class="_2pqhhf"> | <span class="_3CWtsA"><span
+                                    class="_1OMRfP">Free</span></span><span class="_3CWtsA _2_Yr5B">₹40</span></div>
+                    </li>
+                </ul>
+                <ul class="_31bLAK"></ul>
+            </div>
+        </div>
+        <div class="nZz3kj _1hNI6F">
+            <div class="_1uc2IE">
+                <div class="_3dY_ZR"><button class="_23FHuj" disabled=""> – </button>
+                    <div class="_26HdzL"><input type="text" class="_253qQJ" value="1"></div><button class="_23FHuj"> +
+                    </button>
+                </div>
+            </div>
+            <div class="_10vWcL td-FUv WDiNrH">
+                <div class="_3dsJAO">Save for later</div>
+                <div class="_3dsJAO">Remove</div>
+            </div>
+        </div>
+    </div>
+</div>
+<% }); %>
