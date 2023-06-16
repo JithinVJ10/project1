@@ -77,7 +77,9 @@ route.post("/signup", async (req,res)=>{
 
     const users = await userData.find({email:email,mobile:mobile})
 
-    if (users) {
+    console.log(users);
+
+    if (users.length > 0) {
         return res.render("signup",{msg:"email or phone already existing"})
     }
 
@@ -91,24 +93,23 @@ route.post("/signup", async (req,res)=>{
             return
         }
 
-        const data ={
+        const data = new userData({
             name: name,
             email:email,
             mobile:mobile,
             password: hash
-    
-        }
+        })
 
-        userData.insertMany([data])
-        .then(()=>{
-            
-            res.redirect("/login")
-        })
-        .catch((err) => {
-            res.status(500).send({
-              message: err.message || "Some error occurred while creating a create operation",
-            });
-        })
+        data.save()
+            .then(()=>{
+                
+                res.redirect("/login")
+            })
+            .catch((err) => {
+                res.status(500).send({
+                message: err.message || "Some error occurred while creating a create operation",
+                });
+            })
     }) 
 
 
@@ -205,9 +206,10 @@ route.get("/product-details/:id", async (req,res) =>{
 route.get("/user-profile", async (req,res)=>{
     if (req.session.user) {
         try {
+            const user = req.session.user
             const id = req.session.user?._id
             const userdetails = await userData.findOne({_id:id})
-            res.render("User-profile",{userdetails})
+            res.render("User-profile",{userdetails,user})
         } catch (error) {
             console.log(error);
             res.status(500).send("Server Error")
@@ -269,6 +271,9 @@ route.post("/add-address",UserControl.addAddress)
 
 // update user address
 route.post("/update-address/:id",UserControl.updateAddress)
+route.post("/update-userdetails/:id",UserControl.userDetialsUpdate)
+route.post("/update-ProfileAddress/:id",UserControl.updateProfileAddress)
+route.post("/profileAddress-add",UserControl.addAddressProfile)
 
 // checkout page render
 
@@ -291,6 +296,7 @@ route.post("/redeem_coupon",UserControl.redeemCoupon)
 
 // Wallet
 route.get("/wallet",UserControl.wallet)
+route.put('/wallet-pay',UserControl.walletPay)
 
 
 
