@@ -7,6 +7,7 @@ const Cart = require("../model/cart_model")
 const UserControl = require("../controller/userController")
 const bcrypt = require("bcrypt")
 const Catagory = require('../model/add_catagery')
+const Banner = require("../model/bannerModel")
 
 // user main page rendering 
 route.get("/",async (req,res)=>{
@@ -14,16 +15,29 @@ route.get("/",async (req,res)=>{
     if (req.session.user) {
         try {
             const user = req.session.user
+            const userId = req.session.user?._id
+
             const data = await Product.find()
+            const catagory = await Catagory.find()
+            const banner = await Banner.find()
+            let modelCart = await Cart.findOne({ userId: userId }).populate(
+                "products.productId"
+              )
+            
+            if(modelCart!==null){
+                let products = modelCart.products
+                res.render("index-after-login",{user,data,catagory,products,banner})
+            }else{
+                res.render("index-after-login",{user,data,catagory,banner})
+            }
 
-
-            res.render("index-after-login",{user,data})
         } catch (error) {
             console.log(error);
             res.status(500).send("Server Error")
         }
 
     }else{
+        
         res.render("index")
     }
 })
@@ -32,30 +46,6 @@ route.get("/",async (req,res)=>{
 // user home  page2 rendering
 route.get("/home-02",(req,res)=>{
     res.render("home-02")
-})
-
-// user product page  rendering with product data
-route.get("/product", async (req,res)=>{
-    if (req.session.user) {
-        try {
-            const user = req.session.user
-            const data = await Product.find()
-            const catagory = await Catagory.find()
-
-            if (data) {
-                res.render("product", {data,user,catagory})
-            }
-        } catch (err) {
-            console.log(err);
-            res.status(500).send("Server Error")
-        }
-        
-    }else{
-        const data = await Product.find()
-        const catagory = await Catagory.find()
-        res.render("product", {data,catagory})
-    }
-    
 })
 
 // user sign up rendering
@@ -164,9 +154,6 @@ route.post("/login", async (req,res)=>{
     } catch (error) {
         
     }
-    
-
-
 })
 
 // OTP log in
@@ -175,91 +162,24 @@ route.get("/otp",(req,res)=>{
     res.render('otpSubmit')
 })
 
-//rendering product details page with particular product
-route.get("/product-details/:id", async (req,res) =>{
-    if (req.session.user) {
-        try {
-            const user = req.session.user
-            const {id}= req.params
-            let product = await Product.findById(id)
-
-            if (!product) {
-                console.log("Not found");
-                res.redirect("/product")
-            }
-
-            return res.render("product-detail" ,{product,user})
-        } catch (error) {
-            console.error(error)
-            res.redirect("/product")
-        }
-        
-    }else{
-        res.redirect("/login")
-    }
-    
-})
-
+// user product page  rendering with product data
+route.get("/product", UserControl.viewProducts)
+route.get("/product-details/:id",UserControl.getSingleProduct)
+// product sort
+route.get("/low-to-high",UserControl.LowToHigh)
+route.get("/high-to-low",UserControl.HighToLow)
 
 // User profile
 
-route.get("/user-profile", async (req,res)=>{
-    if (req.session.user) {
-        try {
-            const user = req.session.user
-            const id = req.session.user?._id
-            const userdetails = await userData.findOne({_id:id})
-            res.render("User-profile",{userdetails,user})
-        } catch (error) {
-            console.log(error);
-            res.status(500).send("Server Error")
-        }
-        
-    }else{
-        res.redirect("/user-logout")
-    }
-})
+route.get("/user-profile",UserControl.getProfile)
 
 // rendering shopping cart page
-route.get("/shoping-cart", async (req,res)=>{
-    if (req.session.user) {
-        try {
-            
-            let userId = req.session.user._id
-            let user = req.session.user
-            let cart = await Cart.findOne({ userId: userId }).populate(
-              "products.productId"
-            )
-            
-            if(cart){
-                let products = cart.products
-                res.render('shoping-cart', { cart,user, products })
-            }else{
-                res.redirect("/product")
-
-            }
-            
-          
-          
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: 'Server error'});
-        }
-        
-    }else{
-        res.redirect('/login')
-    }
-})
-
+route.get("/shoping-cart",UserControl.getCart)
 // add to cart function
-
 route.post("/add-to-cart/:id",UserControl.addToCart)
-
 //delete a itemfom cart
 route.get("/deleteItem-inCart/:id",UserControl.deleteItemInCart)
-
-//incremenr and decement quantity
-
+//incremene and decement quantity
 route.post("/increase_product",UserControl.incrementQuantity)
 route.post("/decreaseQuantity",UserControl.decreaseQuantity)
 
@@ -304,9 +224,7 @@ route.put('/wallet-pay',UserControl.walletPay)
 // user log out
 route.get("/user-logout", (req,res)=>{
     req.session.user = null
-
     res.redirect("/")
-
 })
 
 module.exports = route
