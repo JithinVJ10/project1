@@ -106,8 +106,9 @@
                                             <tr>
                                                 <th scope="row"><%= index+1 %>  </th>
                                                 <td><%= coupon.code %></td>
-                                                <td><%= coupon.startingDate.toLocaleDateString() %></td>
-                                                <td><%= coupon.expiryDate.toLocaleDateString() %></td>
+                                                <td><%= coupon.startingDate ? coupon.startingDate.toLocaleDateString() : '' %></td>
+                                                <td><%= coupon.expiryDate ? coupon.expiryDate.toLocaleDateString() : '' %></td>
+
                                                 <td><%= coupon.discount %></td>
                                                 <td><%= coupon.status %></td>
                                                 <td><a href="#" onclick="confirmDelete(event, '<%= coupon._id %>')"><i class="fas fa-times"></i> </a></td>
