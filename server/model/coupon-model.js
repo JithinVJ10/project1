@@ -15,11 +15,11 @@ const couponSchema = new mongoose.Schema({
     },
     discount: {
         type: String,
-        require: false,
+        require: true,
     },
     status: {
         type: Boolean,
-        dafault: false
+        default: false
     }
 })
 
