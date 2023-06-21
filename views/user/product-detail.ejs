@@ -274,6 +274,12 @@
 											Add to cart
 										</button>
 									</a>
+									
+									<a href="/add-to-wishlist/<%= product._id %>">
+										<button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" id="addToWishlistButton">
+											Add to Wishlist
+										</button>
+									</a>
 
 									<!-- <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
 										Add to cart
@@ -1195,6 +1201,34 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 					icon: "success",
 					button: "OK",
 				});
+			}
+		};
+		xhr.send();
+		});
+	</script>
+
+	<script>
+		function showToast() {
+		Toastify({
+			text: 'Product added to Wishlist',
+			duration: 3000, // Duration in milliseconds
+			gravity: 'top', // Display position
+			position: 'center', // Display position
+			backgroundColor: '#ff6f00', // Toast background color
+			stopOnFocus: true, // Stop timer when the toast is hovered
+		}).showToast();
+		}
+
+		document.getElementById('addToWishlistButton').addEventListener('click', function(event) {
+		event.preventDefault();
+			let productName = '<%= product.name %>'
+		// Make an AJAX request to the server
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', '/add-to-wishlist/<%= product._id %>', true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+			// Display the success toast or SweetAlert here
+				showToast()
 			}
 		};
 		xhr.send();
