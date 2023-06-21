@@ -94,46 +94,43 @@
                         <table id="myTable" class="table">
                           <thead>
                             <tr>
-                              <th scope="col">Sl:no</th>
-                  
-                              <th scope="col">Banner Name</th>
+                              <th scope="col">Sl:No</th>
+                              <th scope="col">Name</th>
+                              <th scope="col">Description</th>
                               <th scope="col">Image</th>
-              
                               <th scope="col">Date</th>
-                              
-                             
                               <th scope="col">Action</th>
+                              <th scope="col">Edit</th>
                             </tr>
                           </thead>
-              
                           <tbody>
-                           
+                            <% bannerData.forEach((element, index) => { %>
                             <tr>
-                                <td style="background-color: #191C24;"></td>
-                                <td style="background-color: #191C24;"></td>
-                                <td style="background-color: #191C24;">
-                                    <img class="img-thumbnail" width="100px" src="">
-                                  </td>
-                              
-                                <td style="background-color: #191C24;"></td>
+                              <td><%= index+1 %></td>
+                              <td><%= element.name %></td>
+                              <td><%= element.description %></td>
+                              <td>
+                                <img class="img-thumbnail" width="100px" src="<%= element.photo[0] %>">
+                              </td>
+                             <td><%= element.date ? element.date.toLocaleDateString() : '' %></td>
+                
+                              <td>
                                 
-                               
-                               
-                             
-              
-                               
-                                <td style="background-color: #191C24;">
-                                    <a  data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-pencil-alt"></i></a>
-                                    
-                                    <a href="/activateBanner/" style="color: beige;" class="btn btn-success">Activate</a>
-                        
-                             
-                                </td>
+                                <% if (element.status) { %>
+                                  <a href="/deactivateBanner/<%= element._id %>"
+                                    class="btn btn-danger btn-sm border-shadow update" onclick="confirmUnblock(event)">
+                                    <i class="fa fa-lock" aria-hidden="true"></i> Deactivate
+                                  </a>
+                                  <% } else { %>
+                                    <a href="/activateBanner/<%= element._id %>" class="btn btn-success btn-sm border-shadow update"
+                                      onclick="confirmBlock(event)">
+                                      <i class="fa fa-lock" aria-hidden="true"></i> Activate
+                                    </a>
+                                    <% } %>
+                              </td>
+                              <td><a data-bs-toggle="modal" data-bs-target="#exampleModal<%= element._id %>"><i class="fas fa-pencil-alt"></i></a></td>
                             </tr>
-                           
-                            
-                          
-                     
+                            <% }) %>
                           </tbody>
                         </table>
                       </div>
@@ -147,6 +144,77 @@
     
         </div>
         <!-- Content End -->
+
+        <% bannerData.forEach((banner) =>{ %>
+
+          <!-- Modal -->
+        
+          <div class="modal fade" id="exampleModal<%= banner._id  %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Banner updated</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <form action="/update-banner/<%= banner._id %>" method="post">
+                        <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">Name</label>
+                          <input
+                              type="text"
+                              class="form-control"
+                              name="name"
+                              id="exampleInputPassword1"
+                              value="<%= banner.name %>"
+                              required
+                          />
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">Description</label>
+                          <input
+                              type="text"
+                              class="form-control"
+                              name="description"
+                              id="exampleInputPassword1"
+                              value="<%= banner.description %>"
+                              required
+                          />
+                        </div>
+                      
+                          <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">photo</label>
+                          <input
+                              type="file"
+                              class="form-control"
+                              name="photo"
+                              multiple
+                              id="exampleInputPassword1"
+                              
+                          />
+                          <img src="/<%= banner.photo[0] %>" alt="" width="50px" class="img-thumbnail mt-3">
+                          </div>
+                          <div class="mb-3">
+                          <label for="exampleInputPassword2" class="form-label">Date</label>
+                          <input
+                              type="date"
+                              class="form-control"
+                              name="date"
+                          
+                              id="exampleInputPassword2"
+                              required
+                              value="<%= banner.date.toLocaleDateString() %>"
+                          />
+                          </div>
+                      
+                         
+                          <button type="submit" class="btn btn-primary">Save changes</button>
+                      </form>
+
+                  </div>
+              </div>
+              </div>
+          </div>
+      <% }) %>
 
 
         <!-- Back to Top -->
