@@ -334,16 +334,25 @@ exports.addcatagory=async(req,res)=>{
     const existing = await Catagory.findOne({catagory:newCatagory})
 
     if (existing) {
-      return res.render("add-category",{msg:"Category Already existing"})
+
+      console.log('Catagory Already Exist');
+      return res.json({
+        success: false,
+        message: 'Catagory Already Exist'
+      });
     }
 
     const catagory =new Catagory({
       catagory:newCatagory,
-      // description:req.body.description
+      description:req.body.description
     })
-    const data = await catagory.save();
+    const savedCatagory = await catagory.save();
 
-    res.redirect('/catagory-admin')
+    res.json({
+      success: true,
+      message: 'Category Added Successfully',
+      category: savedCatagory,
+    });
   }
   catch(err){
     console.log(err);
@@ -362,20 +371,28 @@ exports.updateCatagory = async (req,res)=>{
     const id = req.params.id
     const updatedCatagory = req.body.catagory 
 
-    // const existing = await Catagory.find({catagory:updatedCatagory})
+    const existing = await Catagory.findOne({catagory:updatedCatagory})
 
-    // if (existing) {
-    //   return res.render("add-category",{msg:"Category Already existing"})
-    // }
+    if (existing) {
+      return res.json({
+        success: false,
+        message: 'Catagory Already Exist'
+      });
+    }
     const updatedCata = await Catagory.findByIdAndUpdate(id,{
       catagory:updatedCatagory
     })
 
     if (updatedCata) {
-      res.redirect("/catagory-admin")
+      return res.json({
+        success: true,
+        message: 'Catagory Successfully Updated'
+      });
     }else{
-      console.log("catagory not updated!!");
-      res.redirect("/catagory-admin")
+      return res.json({
+        success: false,
+        message: 'Not Updated'
+      });
     }
   } catch (err) {
     res.status(500).send(err.message)
