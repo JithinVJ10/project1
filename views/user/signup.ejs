@@ -49,7 +49,7 @@
                     <div class="inputbox">
                         
                         <ion-icon name="person-outline"></ion-icon>
-                        <input type="text" name="name" id="name">
+                        <input oninput="capitalizeFirstLetter()" type="text" name="name" id="name">
                         <label for="">Username</label>
                         <span id="name-error" style="color: red;"></span>
                     </div>
@@ -93,6 +93,11 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
+
+        function capitalizeFirstLetter() {
+            var input = document.getElementById("name");
+            input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+        }
       setTimeout(()=>{
         document.getElementById("msg").style.display ="none"
       },2000)
