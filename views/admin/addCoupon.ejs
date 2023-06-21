@@ -78,27 +78,30 @@
 
 
             <!-- form -->
-            <form action="/addCoupon" method="post" class="m-5">
+            <form action="/addCouponPost" method="post" class="m-5">
                 <div class="col-sm-12 col-xl-6">
                     <div class="bg-secondary rounded h-100 p-4">
                         <h6 class="mb-4">Add Coupon</h6>
+                        
+                        <div style="color: rgb(255, 0, 0);" id="msg"><%= locals.msg? msg:'' %></div>
+                        
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" name="code" required>
+                            <input type="text" class="form-control" id="floatingCode" name="code" required>
                             <label for="floatingInput">Code</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="floatingPassword" name="startingdate" required>
-                            <label for="floatingPassword">Starting Date</label>
+                            <input type="date" class="form-control" id="floatinSdate" name="startingdate" required>
+                            <label for="floatinSdate">Starting Date</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="floatingPassword" name="ExpireDate" required>
-                            <label for="floatingPassword">Expire Date</label>
+                            <input type="date" class="form-control" id="floatingEdate" name="ExpireDate" required>
+                            <label for="floatingEdate">Expire Date</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingPassword" name="discount" required>
-                            <label for="floatingPassword">Discount</label>
+                            <input type="text" class="form-control" id="floatingDiscount" name="discount" required>
+                            <label for="floatingDiscount">Discount</label>
                         </div>
-                        <input type="submit" class="btn btn-succes">
+                        <input type="submit" class="btn btn-success">
 
                     </div>
                 </div>
@@ -113,5 +116,12 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+    <script>
+        setTimeout(()=>{
+          document.getElementById("msg").style.display ="none"
+        },2000)
+      </script>
+    
 
     <%- include('include/_footer') %>
