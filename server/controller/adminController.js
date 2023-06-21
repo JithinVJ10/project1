@@ -3,6 +3,8 @@ const Product = require("../model/product_model")
 const Catagory = require("../model/add_catagery")
 const userData = require("../model/model")
 const Coupon = require("../model/coupon-model")
+const Banner = require("../model/bannerModel")
+
 
 // GET method ADMIN dashboard Rendering with Sales report "/admim"
 
@@ -418,12 +420,21 @@ exports.addCoupon = (req,res)=>{
 
 exports.addCouponPost = async (req,res)=>{
   try {
-    const {code,startingdate,ExpireDate,discount} = req.body
+    const {code,discount} = req.body
+    const startingDate = new Date(req.body.startingdate);
+    const expiryDate = new Date(req.body.ExpireDate);
+    
+
+    const newCode = await Coupon.findOne({code:code})
+
+    if (newCode) {
+      return res.render("addCoupon",{msg:"Coupon name Already Exist"})
+    }
     
     const coupon = new Coupon({
       code:code,
-      startingDate:startingdate,
-      expiryDate:ExpireDate,
+      startingDate:startingDate,
+      expiryDate:expiryDate,
       discount:discount,
       status:false
 
@@ -512,10 +523,12 @@ exports.deactivateCoupon = async (req,res)=>{
   }
 }
 
-exports.adminBanner = (req,res) =>{
+// GET banner page render
+exports.adminBanner = async (req,res) =>{
   if(req.session.admin){
     try {
-      res.render("adminBanner")
+      const bannerData = await Banner.find()
+      res.render("adminBanner",{bannerData})
     } catch (error) {
       console.log(error);
       res.status(500).send("Error")
@@ -525,9 +538,11 @@ exports.adminBanner = (req,res) =>{
   }
 }
 
-exports.addBannerGet = (req,res)=>{
+// GET add new banner page render
+exports.addBannerGet =  (req,res)=>{
   if(req.session.admin){
     try {
+      
       res.render("addBanner")
     } catch (error) {
       console.log(error);
@@ -538,12 +553,87 @@ exports.addBannerGet = (req,res)=>{
   }
 }
 
+// POST adding new banner
 exports.newBannerPost = async (req,res) =>{
   try {
-    const {name,photo,date} = req.body
+    const banner = new Banner({
+      name: req.body.name,
+      photo: req.files.map((file) => file.filename),
+      date:req.body.date,
+    });
+
+    await banner.save()
+
+    res.redirect('/adminBanner')
     
   } catch (error) {
     console.log(error);
     res.redirect("/error-404")
+  }
+}
+
+exports.activateBanner = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Banner.findByIdAndUpdate(
+      id,
+      {
+        status: true
+      },
+      { new: true }
+    );
+    res.redirect('/adminBanner');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.deactivateBanner = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Banner.findByIdAndUpdate(
+      id,
+      {
+        status: false
+      },
+      { new: true }
+    );
+    res.redirect('/adminBanner');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.updateBanner = async (req,res)=>{
+  try {
+    const bannerId = req.params.id;
+    const { name, description, date } = req.body;
+
+    // Get the banner from the database
+    const banner = await Banner.findById(bannerId);
+
+    // Update banner properties
+    banner.name = name;
+    banner.description = description;
+    banner.date = date;
+
+    // Check if there are new photos uploaded
+    if (req.files && req.files.length > 0) {
+      // Add the new photo URLs to the banner's photo array
+      banner.photo = req.files.map(file => file.path);
+    }
+
+    // Save the updated banner
+    try {
+      await banner.save();
+    } catch (error) {
+      console.log(error);
+    }
+    
+
+    res.redirect('/adminBanner'); // Redirect to the banners page or any other desired destination
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the banner.' });
   }
 }
