@@ -176,11 +176,29 @@
           return false;
         }
 
+        if (!/[A-Z]/.test(password)) {
+          passwordError.innerHTML = "at least one uppercase letter";
+          return false;
+        }
+
         // Password should contain at least one number
         if (!/\d/.test(password)) {
           passwordError.innerHTML ="atleast one number"
           return false;
         }
+
+        // Check if password contains spaces
+        if (/\s/.test(password)) {
+          passwordError.innerHTML = "Password should not contain spaces";
+          return false;
+        }
+
+          // Password should contain at least one special symbol
+          if (!/[!@#$%^&*]/.test(password)) {
+            passwordError.innerHTML = "At least one special symbol";
+            return false;
+          }
+
 
 
         // Password is valid
