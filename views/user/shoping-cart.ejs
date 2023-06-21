@@ -139,7 +139,7 @@
 		
 
 	<!-- Shoping Cart -->
-	<% if (products.length === 0 || products == null) { %>
+	<% if (!locals.products) { %>
 		<div class="empty-cart-message mt-5">
 			<h2>Your cart is currently empty!</h2>
 			<a  href="/product" class="continue-shopping-button mt-3">Continue Shopping</a>
@@ -162,7 +162,7 @@
 								  </tr> 
 							  
 								  <% products.forEach(product => { %>
-									<tr class="table_row">
+									<tr class="table_row" id="product_<%= product.productId._id %>">
 									  <td class="column-1">
 										<div class="how-itemcart1">
 										  <img src="<%= product.productId.photo[0] %>" alt="IMG">
@@ -184,7 +184,7 @@
 									  <% var total = product.quantity * product.productId.price %>
 									  <td class="column-5 item-total" id="product-total-price-<%= product.productId._id %>"><%= total %></td>
 									  <td class="column-5">
-										<a href="/deleteItem-inCart/<%= product.productId._id %>"><i class="fa-solid fa-trash" style="color: #054ab3;"></i></a>
+										<button type="button" onclick="deleteItem('<%= product.productId._id %>','product_<%= product.productId._id %>','<%= product.productId.name %>')"><i class="fa-solid fa-trash" style="color: #054ab3;"></i></button>
 									  </td>
 									</tr>
 								  <% }) %>
@@ -483,6 +483,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 			<i class="zmdi zmdi-chevron-up"></i>
 		</span>
 	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- ==========Script for cart and increment and decreameant ======= -->
 
 	<script>
@@ -541,7 +543,31 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 				$(`#quantity_${cartItemId}`).text(1)
 			}
 		}
+
+		function deleteItem(removeItem,products,productName){
+			
+			$.ajax({
+				url:`/deleteItem-inCart/${removeItem}`,
+				method:"GET",
+				success: (data)=>{
+					if (data.success) {
+						swal("Success", `${productName} Removed successfully`, "success").then(()=>{
+							$('#' + products).remove();
+							setSubtotal();
+						})
+					}else{
+						swal("Error", `Failed to remove the ${productName}`, "error");
+					}
+				},
+				error: (xhr, status, error)=>{
+					swal("Error", `Failed to remove the ${productName}`, "error");
+				}
+			})
+		}
 	</script>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!--===============================================================================================-->	
 	<script src="assetUser/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
