@@ -218,6 +218,10 @@ route.post("/redeem_coupon",UserControl.redeemCoupon)
 route.get("/wallet",UserControl.wallet)
 route.put('/wallet-pay',UserControl.walletPay)
 
+// Wishlist
+route.get("/wishlist",UserControl.getWishlist)
+route.post('/add-to-wishlist/:id',UserControl.addToWishlist)
+route.delete("/deleteItem-Wishlist/:id",UserControl.removeItemWishlist)
 
 
 
