@@ -79,19 +79,20 @@
 
 
             <!-- form -->
-            <form action="/updateCatagory/<%=catagory._id %>" method="post" class="m-5">
+            <form onsubmit="updateCatagory(event,'<%=catagory._id %>')" class="m-5" >
                 <div class="col-sm-12 col-xl-6">
                     <div class="bg-secondary rounded h-100 p-4">
                         <h6 class="mb-4">Update Catagory</h6>
+                        <div id="msg"></div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" name="catagory" value="<%=catagory.catagory %>">
+                            <input oninput="capitalizeFirstLetter()" type="text" class="form-control" id="floatingInput" name="catagory" value="<%=catagory.catagory %>">
                             <label for="floatingInput">Catagory</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="floatingPassword" name="description" >
                             <label for="floatingPassword">Description</label>
                         </div>
-                        <input type="submit" class="btn btn-succes">
+                        <input type="submit" class="btn btn-success">
 
                     </div>
                 </div>
@@ -106,5 +107,62 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        function capitalizeFirstLetter() {
+            $("#floatingInput") = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+        }
+
+        function updateCatagory(event,catagoryId) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            
+            // Retrieve form data
+            const catagory = $('#floatingInput').val();
+            const description = $('#floatingPassword').val();
+            
+            // Create an object with the form data
+            const data = {
+                catagory: catagory,
+                description: description
+            };
+            
+            $.ajax({
+                url: `/updateCatagory/${catagoryId}`,
+                method: 'POST',
+                data: data,
+                success: function(response) {
+                    
+                    if (response.success) {
+                        // Display success message
+                        $('#msg').text('Category added successfully!').css('color', 'green');
+                        
+                        // Redirect to "/catagory-admin" after a short delay
+                        setTimeout(function() {
+                            window.location.href = '/catagory-admin';
+                        }, 1000); 
+                    } else {
+                        // Display error message
+                        $('#msg').text('An error occurred: ' + response.message).css('color', 'red');
+                                    
+                        setTimeout(function() {
+                            $('#msg').text(''); // Clear the message
+                        }, 2000);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                    // Display the error message on the page
+                    $('#msg').text('An error occurred: ' + error).css('color', 'red');
+                }
+            });
+        }
+
+
+
+
+
+    </script>
 
     <%- include('include/_footer') %>
