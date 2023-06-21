@@ -5,6 +5,204 @@ const Order = require("../model/order_model")
 const paypal= require('paypal-rest-sdk')
 const Coupon = require("../model/coupon-model")
 const Wallet = require("../model/wallet-model")
+const Catagory = require("../model/add_catagery")
+
+
+exports.viewProducts = async (req, res) => {
+  if (req.session.user) {
+    try {
+      const pageSize = 6;
+      const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+      const totalProducts = await Product.countDocuments();
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const skip = (currentPage - 1) * pageSize;
+
+      const user = req.session.user;
+      const data = await Product.find().skip(skip).limit(pageSize);
+      const catagory = await Catagory.find();
+
+      if (data) {
+        res.render("product", {
+          data,
+          user,
+          catagory,
+          totalPages,
+          currentPage,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error");
+    }
+  } else {
+    const data = await Product.find();
+    const catagory = await Catagory.find();
+    res.render("product", { data, catagory, currentPage: 1 });
+  }
+};
+
+//Single porduct page
+
+exports.getSingleProduct = async (req,res)=>{
+  if (req.session.user) {
+    try {
+        const user = req.session.user
+        const {id}= req.params
+        let product = await Product.findById(id)
+
+        if (!product) {
+            console.log("Not found");
+            res.redirect("/product")
+        }
+
+        return res.render("product-detail" ,{product,user})
+    } catch (error) {
+        console.error(error)
+        res.redirect("/product")
+    }
+    
+}else{
+    res.redirect("/login")
+}
+}
+
+//low to high
+exports.LowToHigh = async (req, res) => {
+  if(req.session.user){
+  
+  
+    try {
+      const pageSize = 6;
+      const currentPage = parseInt(req.query.page) || 1;
+
+      const totalProducts = await Product.countDocuments({ blocked: false });
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const skip = (currentPage - 1) * pageSize;
+      
+
+      const data = await Product.find({ blocked: false })
+        .sort({ price: 1 })
+        .skip(skip)
+        .limit(pageSize);
+
+      
+
+      const catagory= await Catagory.find()
+      const user = req.session.user;
+      const user_id = req.session.user?._id;
+
+      
+
+      res.render("product", {
+        data,
+        user,
+        user_id,
+        totalPages,
+        currentPage,
+        catagory
+      });
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // res.render("error", { message: "Error fetching products" });
+      res.status(500).sent("Error")
+    }
+
+  }else{
+    const pageSize = 6;
+    const totalProducts = await Product.countDocuments({ blocked: false });
+    const totalPages = Math.ceil(totalProducts / pageSize);
+    const data = await Product.find();
+    const catagory = await Catagory.find();
+  
+    res.render("product", { data, catagory, currentPage: 1,totalPages });
+
+  }
+};
+
+// price sort high to low
+exports.HighToLow = async (req, res) => {
+  if(req.session.user){
+  
+  
+    try {
+      const pageSize = 6;
+      const currentPage = parseInt(req.query.page) || 1;
+
+      const totalProducts = await Product.countDocuments({ blocked: false });
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const skip = (currentPage - 1) * pageSize;
+      
+
+      const data = await Product.find({ blocked: false })
+        .sort({ price: -1 })
+        .skip(skip)
+        .limit(pageSize);
+
+      
+
+      const catagory= await Catagory.find()
+      const user = req.session.user;
+      const user_id = req.session.user?._id;
+
+
+      res.render("product", {
+        data,
+        user,
+        user_id,
+        totalPages,
+        currentPage,
+        catagory
+      });
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // res.render("error", { message: "Error fetching products" });
+      res.status(500).sent("Error")
+    }
+
+  }else{
+    const pageSize = 6;
+    const totalProducts = await Product.countDocuments({ blocked: false });
+    const totalPages = Math.ceil(totalProducts / pageSize);
+    const data = await Product.find();
+    const catagory = await Catagory.find();
+  
+    res.render("product", { data, catagory, currentPage: 1,totalPages });
+
+  }
+};
+
+
+// GET Cart
+
+exports.getCart = async (req,res)=>{
+  if (req.session.user) {
+    try {
+        
+        let userId = req.session.user._id
+        let user = req.session.user
+        let cart = await Cart.findOne({ userId: userId }).populate(
+          "products.productId"
+        )
+        
+        if(cart!==null){
+            let products = cart.products
+            res.render('shoping-cart', { cart,user, products })
+        }else{
+            res.render('shoping-cart', { cart,user })
+
+        }
+        
+      
+      
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Server error'});
+    }
+    
+  }else{
+      res.redirect('/login')
+  }
+}
 
 // Add to cart function
 exports.addToCart = async (req,res)=>{
@@ -66,9 +264,16 @@ exports.deleteItemInCart = async (req,res)=>{
         )
         
         if(productDeleted){
-            res.redirect("/shoping-cart")
+          res.json({
+            success:true,
+            message:"Remove item",
+          })
         }else{
             console.log("product not deleled");
+            res.json({
+              success:false,
+              message:"failed to Remove item",
+            })
         }
 
     } catch (error) {
@@ -83,7 +288,7 @@ exports.incrementQuantity = async (req,res)=>{
     console.log("quantity incre");
     const userId = req.session.user?._id
     const cartId = req.body.cartId
-    console.log(userId);
+    
 
     try {
         let cart = await Cart.findOne({userId: userId}).populate("products.productId")
@@ -118,8 +323,6 @@ exports.incrementQuantity = async (req,res)=>{
 }
 
 exports.decreaseQuantity = async (req, res) => {
-
-    console.log("quantity decre");
   
     const cartItemId = req.body.cartItemId
     const userId = req.session.user?._id
@@ -273,6 +476,26 @@ exports.addAddress = async (req, res) => {
     }
   }
 
+
+  // Profite Get
+
+  exports.getProfile = async (req,res)=>{
+    if (req.session.user) {
+      try {
+          const user = req.session.user
+          const id = req.session.user?._id
+          const userdetails = await userData.findOne({_id:id})
+          res.render("User-profile",{userdetails,user})
+      } catch (error) {
+          console.log(error);
+          res.status(500).send("Server Error")
+      }
+      
+    }else{
+        res.redirect("/user-logout")
+    }
+  }
+
   // POST profile address update
 
   exports.updateProfileAddress = async (req, res) => {
@@ -416,7 +639,10 @@ exports.placeorder = async (req,res)=>{
       const cart = await Cart.findOne({userId: userId}).populate("products.productId")
       cart ? console.log(cart) : console.log("Cart not found");
 
+      const wallet = await Wallet.findOne({userId:userId})
+
       const discount = cart.discount
+      const walletDicount = cart.wallet
 
       const items = cart.products.map(item =>{
         const product = item.productId;
@@ -448,6 +674,14 @@ exports.placeorder = async (req,res)=>{
         totalPrice -= discount
       }
 
+      if (walletDicount) {
+        totalPrice -= walletDicount
+        wallet.balance-=walletDicount
+  
+        await wallet.save()
+      }
+
+
       if(payment == "COD"){
 
         const order = new Order({
@@ -462,6 +696,9 @@ exports.placeorder = async (req,res)=>{
         });
   
         await order.save()
+
+
+
   
         await Cart.deleteOne({userId:userId})
   
@@ -877,11 +1114,11 @@ exports.walletPay = async (req,res)=>{
 
         console.log( wallet.balance,"before");
 
-        wallet.balance-=balance
+        // wallet.balance-=balance
 
         
-        await wallet.save();
-        console.log( wallet.balance,"after");
+        // await wallet.save();
+        // console.log( wallet.balance,"after");
      }
 
      res.json({
