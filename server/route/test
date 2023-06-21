@@ -1,41 +1,22 @@
-<% cart.products.forEach(function(product) { %>
-<div class="_1AtVbE col-12-12">
-    <div class="zab8Yh _10k93p">
-        <div class="_2nQDXZ">
-                    <div class="CXW8mj" style="height: 112px; width: 112px;"><img loading="lazy" class="_396cs4" alt="" src="/<%= product.productId.photo[0] %>">
-                    </div>
-                </span></a>
-            <div class="_3fSRat">
-                <div class="_2-uG6-"><p><%= product.productId.name %></p></div>
-                <div class="_20RCA6"> Quantity: <%= product.quantity %> </div>
-                <div class="_3ZS8sw">Seller:DUROFEEL
-                    <span class="price">₹&nbsp;  <%= product.productId.price %></span>
-                <div class="_3zPVJV">
-                    <div class="ebO6Mt" id="offers-LSTBEMGBFCMQCBRUVRFHGFT9L"></div>
-                </div>
-            </div>
-            <div class="_2zbf83">
-                <ul class="_1ZEsQ4">
-                    <li class="JEy4SL">
-                        <div class="_2pqhhf"> | <span class="_3CWtsA"><span
-                                    class="_1OMRfP">Free</span></span><span class="_3CWtsA _2_Yr5B">₹40</span></div>
-                    </li>
-                </ul>
-                <ul class="_31bLAK"></ul>
-            </div>
+<section class="p-4 d-flex justify-content-center w-100">
+  <div class="ecommerce-gallery" data-mdb-zoom-effect="true">
+    <div class="row">
+      <div class="col-12 mb-1">
+        <div class="lightbox" data-id="lightbox-plb319ui7">
+          <img src="/<%= product.photo[0] %>" data-mdb-id="ecommerce-gallery-807329" alt="Table full of spices" class="ecommerce-gallery-main-img w-100" style="transform: scale(1);">
+          <img src="/<%= product.photo[1] %>" data-mdb-id="ecommerce-gallery-550240" alt="Winter Landscape" class="ecommerce-gallery-main-img w-100">
+          <img src="/<%= product.photo[2] %>" data-mdb-id="ecommerce-gallery-925357" alt="View of the City in the Mountains" class="ecommerce-gallery-main-img w-100 active" style="transform: scale(1);">
         </div>
-        <div class="nZz3kj _1hNI6F">
-            <div class="_1uc2IE">
-                <div class="_3dY_ZR"><button class="_23FHuj" disabled=""> – </button>
-                    <div class="_26HdzL"><input type="text" class="_253qQJ" value="1"></div><button class="_23FHuj"> +
-                    </button>
-                </div>
-            </div>
-            <div class="_10vWcL td-FUv WDiNrH">
-                <div class="_3dsJAO">Save for later</div>
-                <div class="_3dsJAO">Remove</div>
-            </div>
-        </div>
+      </div>
+      <div class="col-4 my-1">
+        <img src="/<%= product.photo[0] %>" data-mdb-img="/<%= product.photo[0] %>" alt="Table full of spices" class="w-100" data-mdb-id="ecommerce-gallery-807329">
+      </div>
+      <div class="col-4 my-1">
+        <img src="/<%= product.photo[1] %>" data-mdb-img="/<%= product.photo[1] %>" alt="Winter Landscape" class="w-100" data-mdb-id="ecommerce-gallery-550240">
+      </div>
+      <div class="col-4 my-1">
+        <img src="/<%= product.photo[2] %>" data-mdb-img="/<%= product.photo[2] %>" alt="View of the City in the Mountains" class="w-100 active" data-mdb-id="ecommerce-gallery-925357">
+      </div>
     </div>
-</div>
-<% }); %>
+  </div>
+</section>
