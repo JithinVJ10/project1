@@ -131,7 +131,7 @@ route.post("/adminSalesReportFilter",adminController.FilterbyDates)
 
 route.get("/adminCoupon", adminController.adminCoupon)
 route.get("/addCoupon",adminController.addCoupon)
-route.post("/addCoupon",adminController.addCouponPost)
+route.post("/addCouponPost",adminController.addCouponPost)
 route.get("/deleteCoupon/:id",adminController.deleteCoupon)
 route.put("/activateCoupon/:id",adminController.activateCoupon)
 route.put("/DeactivateCoupon/:id",adminController.deactivateCoupon)
@@ -140,6 +140,10 @@ route.put("/DeactivateCoupon/:id",adminController.deactivateCoupon)
 
 route.get("/adminBanner",adminController.adminBanner)
 route.get("/addBanner",adminController.addBannerGet)
+route.post("/newBannerPost",upload.array('photo',3),adminController.newBannerPost)
+route.post('/update-banner/:id',upload.array('photo',3),adminController.updateBanner)
+route.get('/activateBanner/:id',adminController.activateBanner)
+route.get('/deactivateBanner/:id',adminController.deactivateBanner)
 
 
 route.get("/error-404",(req,res)=>{
