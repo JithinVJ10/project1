@@ -210,7 +210,7 @@
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+								<a href="#" onclick="addToWishlist(event,'<%= product._id %>','<%= product.name %>')" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="assetUser/images/icons/icon-heart-01.png" alt="ICON">
 									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="assetUser/images/icons/icon-heart-02.png" alt="ICON">
 								</a>
@@ -571,6 +571,28 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
 	<!-- new code -->
+
+	<script>
+		function addToWishlist(event,productId,productName) {
+                event.preventDefault();
+                    
+                // Make an AJAX request to the server
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', `/add-to-wishlist/${productId}`, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Display the success toast or SweetAlert here
+                        swal({
+                            title: "Success",
+                            text: `${productName} added to Wishlist`,
+                            icon: "success",
+                            button: "OK",
+                        });
+                    }
+                };
+                xhr.send();
+            };
+	</script>
 
 	
 

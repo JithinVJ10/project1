@@ -6,6 +6,7 @@ const paypal= require('paypal-rest-sdk')
 const Coupon = require("../model/coupon-model")
 const Wallet = require("../model/wallet-model")
 const Catagory = require("../model/add_catagery")
+const Wishlist = require("../model/wishlistModel")
 
 
 exports.viewProducts = async (req, res) => {
@@ -35,9 +36,13 @@ exports.viewProducts = async (req, res) => {
       res.status(500).send("Server Error");
     }
   } else {
+    const pageSize = 6;
+    const totalProducts = await Product.countDocuments({ blocked: false });
+    const totalPages = Math.ceil(totalProducts / pageSize);
     const data = await Product.find();
     const catagory = await Catagory.find();
-    res.render("product", { data, catagory, currentPage: 1 });
+    
+    res.render("product", { data, catagory, currentPage: 1 ,totalPages});
   }
 };
 
@@ -51,7 +56,7 @@ exports.getSingleProduct = async (req,res)=>{
         let product = await Product.findById(id)
 
         if (!product) {
-            console.log("Not found");
+            
             res.redirect("/product")
         }
 
@@ -269,7 +274,7 @@ exports.deleteItemInCart = async (req,res)=>{
             message:"Remove item",
           })
         }else{
-            console.log("product not deleled");
+            
             res.json({
               success:false,
               message:"failed to Remove item",
@@ -285,7 +290,7 @@ exports.deleteItemInCart = async (req,res)=>{
 }
 
 exports.incrementQuantity = async (req,res)=>{
-    console.log("quantity incre");
+    
     const userId = req.session.user?._id
     const cartId = req.body.cartId
     
@@ -296,7 +301,7 @@ exports.incrementQuantity = async (req,res)=>{
           // console.log(cart);
 
         let cartIndex = cart.products.findIndex(items=> items.productId.equals(cartId))
-        console.log(cartIndex);
+        
         cart.products[cartIndex].quantity +=1
         let result= await cart.save()
 
@@ -391,7 +396,7 @@ exports.addAddress = async (req, res) => {
         // Find the user by a specific identifier
         const user = await userData.findOne({_id:userId});
 
-        console.log(user);
+        
     
         if (!user) {
           res.status(404).send('User not found.');
@@ -416,11 +421,11 @@ exports.addAddress = async (req, res) => {
       const id = req.params.id;
       const userId = req.session.user?._id;
       const { name, address, mobile, pincode, city, state } = req.body;
-      console.log(id);
+      
   
       // Find the user by their ID
       const user = await userData.findById(userId);
-      console.log(user);
+      
   
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -428,7 +433,7 @@ exports.addAddress = async (req, res) => {
   
       // Find the address to update
       const addressToUpdate = user.address.id(id);
-      console.log(addressToUpdate);
+      
   
       if (!addressToUpdate) {
         return res.status(404).json({ error: 'Address not found' });
@@ -503,11 +508,11 @@ exports.addAddress = async (req, res) => {
       const id = req.params.id;
       const userId = req.session.user?._id;
       const { name, address, mobile, pincode, city, state } = req.body;
-      console.log(id);
+     
   
       // Find the user by their ID
       const user = await userData.findById(userId);
-      console.log(user);
+      
   
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -515,7 +520,7 @@ exports.addAddress = async (req, res) => {
   
       // Find the address to update
       const addressToUpdate = user.address.id(id);
-      console.log(addressToUpdate);
+      
   
       if (!addressToUpdate) {
         return res.status(404).json({ error: 'Address not found' });
@@ -550,7 +555,7 @@ exports.addAddress = async (req, res) => {
         // Find the user by a specific identifier
         const user = await userData.findOne({_id:userId});
 
-        console.log(user);
+        
     
         if (!user) {
           res.status(404).send('User not found.');
@@ -594,7 +599,7 @@ exports.addAddress = async (req, res) => {
         if (userdata) {
           const address = userdata.address[0]; // Get the first (and only) address matching the query
   
-          console.log(address);
+          
           res.render('checkout',{user,cart,address,coupon});
         } else {
           res.status(404).send('Address not found');
@@ -632,12 +637,10 @@ exports.placeorder = async (req,res)=>{
       if (!specifiedAddress) {
         return res.status(404).send('Address not found');
       }
-      console.log("hhdhdh");
-      console.log(id);
-      console.log("hhdhdh");
+
 
       const cart = await Cart.findOne({userId: userId}).populate("products.productId")
-      cart ? console.log(cart) : console.log("Cart not found");
+      
 
       const wallet = await Wallet.findOne({userId:userId})
 
@@ -778,7 +781,7 @@ exports.placeorder = async (req,res)=>{
 
     // const data = await userData.findOne(userId)
   
-    console.log(paypalTotal);
+   
    
     
     
@@ -865,7 +868,6 @@ exports.ordersDetails = async (req,res)=>{
         };
       });
 
-      console.log(orderDetails);
       
       res.render("order_details",{orderDetails,user})
 
@@ -931,7 +933,7 @@ exports.redeemCoupon = async (req, res) => {
     cart.discount=amount
    
     if (!cart) {
-      console.log("Cart not found");
+      
       return; // or throw an error
     }
   
@@ -978,7 +980,7 @@ exports.orderCancel = async (req,res) =>{
 
     },{new:true})
 
-    console.log(order);
+  
 
     const wallet = await Wallet.findOne({userId:order.user})
     if(wallet){
@@ -1061,7 +1063,7 @@ exports.wallet = async (req,res) =>{
       const walletbalance = await Wallet.findOne({ userId: userId }).populate('orderId');
       const orderdetails = await Order.find({ user: userId, status: "Refunded Amount" }).populate('items.product');
       
-      console.log(orderdetails);
+     
       
 
       if (walletbalance) {
@@ -1103,7 +1105,7 @@ exports.walletPay = async (req,res)=>{
 
     })
 
-    console.log(totalPrice,"kk q");
+    
     let balance = (10 / 100) * totalPrice;
 
      let wallet_balance= wallet.balance
@@ -1112,7 +1114,7 @@ exports.walletPay = async (req,res)=>{
         cart.wallet = balance;
         await cart.save();
 
-        console.log( wallet.balance,"before");
+        
 
         // wallet.balance-=balance
 
@@ -1131,5 +1133,107 @@ exports.walletPay = async (req,res)=>{
   } catch (error) {
     console.log(error);
     res.status(500).json("Server Error")
+  }
+}
+
+//wishlist get
+exports.getWishlist = async  (req,res)=>{
+  if (req.session.user) {
+    try {
+      const user = req.session.user
+      const userId = req.session.user?._id
+
+      const wishlistData = await Wishlist.findOne({userId:userId}).populate('products.productId')
+
+      if(wishlistData!==null){
+        let products = wishlistData.products
+        res.render("wishlist",{user,products,wishlistData})
+      }else{
+        res.render("wishlist",{user,wishlistData})
+
+      }
+
+        
+      } catch (error) {
+        console.log(error);
+      }
+  }else{
+    res.redirect("/login")
+  }
+}
+
+// add to wishlist
+
+exports.addToWishlist = async (req,res)=>{
+  try {
+    
+    const productId = req.params.id
+    const userId = req.session.user
+
+    let userWishlist = await Wishlist.findOne({userId:userId})
+
+  if (!userWishlist) {
+      // If the user's cart doesn't exist
+      //creat new one
+      let newWishlist = new Wishlist({ userId: userId, products: [] });
+      await newWishlist.save();
+      userWishlist = newWishlist;
+  }
+
+  const productIndex = userWishlist.products.findIndex(
+      (product) => product.productId == productId
+
+  );
+  
+
+  if (productIndex === -1) {
+    // If the product is not in the wishlist, add it
+    userWishlist.products.push({ productId: productId, quantity: 1 });
+  } else {
+    // If the product is already in the wishlist, increase its quantity by 1
+    userWishlist.products[productIndex].quantity += 1;
+  }
+  
+    
+
+  const result = await userWishlist.save();
+
+
+  res.status(200).json({ message: 'Product added to wishlist successfully' });
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+exports.removeItemWishlist = async (req,res)=>{
+  try {
+    const productId = req.params.id
+    const userId= req.session.user?._id
+    
+
+    const productDeleted = await Wishlist.findOneAndUpdate(
+        {userId: userId},
+        {$pull:{ products:{productId: productId}}},
+        {new: true}
+    )
+    
+    if(productDeleted){
+      res.json({
+        success:true,
+        message:"Remove item",
+      })
+    }else{
+       
+        res.json({
+          success:false,
+          message:"failed to Remove item",
+        })
+    }
+
+  } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error")
+      
   }
 }
