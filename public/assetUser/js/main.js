@@ -268,14 +268,30 @@
     
     /*==================================================================
     [ Show modal1 ]*/
-    $('.js-show-modal1').on('click',function(e){
+    $('.js-show-modal1').on('click', function(e) {
         e.preventDefault();
+        var productName = $(this).data('product-name');
+        var productPrice = $(this).data('product-price');
+        var productDescription = $(this).data('product-description');
+        var productImage = $(this).data('product-image');
+      
+        $('#product-name').text(productName);
+        $('#product-price').text(productPrice);
+        $('#product-description').text(productDescription);
+        $('#product-image').attr('src', productImage);
+        $('.slick3').slick('slickGoTo', 0); // Go to the first slide
+      
         $('.js-modal1').addClass('show-modal1');
-    });
-
-    $('.js-hide-modal1').on('click',function(){
+      });
+      
+      $('.js-hide-modal1').on('click', function() {
         $('.js-modal1').removeClass('show-modal1');
-    });
+      });
+      
+    //   $('#add-to-cart-btn').on('click', function() {
+    //     // Perform further actions with the selected product details
+    //   });
+      
 
 
 
