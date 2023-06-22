@@ -574,6 +574,42 @@ exports.addAddress = async (req, res) => {
         res.status(500).send('Error finding/updating user.');
       }
   };
+
+  // delete user address
+
+  exports.deleteAddress = async (req,res) =>{
+      try {
+        // Find the user document by ID
+        const userId = req.session.user?._id
+        const addressId = req.params.id
+
+        const user = await userData.findById(userId);
+    
+        if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+    
+        // Find the index of the address with the specified _id in the array
+        const addressIndex = user.address.findIndex(address => address._id.toString() === addressId);
+    
+        if (addressIndex === -1) {
+          return res.status(404).json({ error: 'Address not found' });
+        }
+    
+        // Remove the address from the array
+        user.address.splice(addressIndex, 1);
+    
+        // Save the updated user document
+        await user.save();
+    
+        res.redirect('/user-profile'); // Redirect to a suitable page after successful deletion
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+      }
+    }
+      
+
   
 
 
