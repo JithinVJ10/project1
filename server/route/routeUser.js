@@ -194,6 +194,7 @@ route.post("/update-address/:id",UserControl.updateAddress)
 route.post("/update-userdetails/:id",UserControl.userDetialsUpdate)
 route.post("/update-ProfileAddress/:id",UserControl.updateProfileAddress)
 route.post("/profileAddress-add",UserControl.addAddressProfile)
+route.get('/delete-address/:id',UserControl.deleteAddress)
 
 // checkout page render
 
