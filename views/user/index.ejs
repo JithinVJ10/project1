@@ -288,6 +288,7 @@
 	<section class="section-slide">
 		<div class="wrap-slick1">
 			<div class="slick1">
+				<% if(locals.banner){ %>
 				<% banner.forEach(banner => { %>
 				<div class="item-slick1" style="background-image: url('<%= banner.photo %>');">
 					<div class="container h-full">
@@ -313,6 +314,8 @@
 					</div>
 				</div>
 				<% }) %>
+				% } %>
+
 			</div>
 		</div>
 	</section>
