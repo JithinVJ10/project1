@@ -37,8 +37,11 @@ route.get("/",async (req,res)=>{
         }
 
     }else{
+        const banner = await Banner.find()
+        const data = await Product.find()
+        const catagory = await Catagory.find()
         
-        res.render("index")
+        res.render("index",{data,catagory,banner})
     }
 })
 
