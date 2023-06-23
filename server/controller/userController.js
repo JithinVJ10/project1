@@ -13,38 +13,101 @@ exports.viewProducts = async (req, res) => {
   if (req.session.user) {
     try {
       const pageSize = 6;
-      const currentPage = req.query.page ? parseInt(req.query.page) : 1;
-      const totalProducts = await Product.countDocuments();
-      const totalPages = Math.ceil(totalProducts / pageSize);
-      const skip = (currentPage - 1) * pageSize;
+      let currentPage = req.query.page ? parseInt(req.query.page) : 1;
+      let totalProducts, data;
 
+      if (req.query.query) {
+        // Search query is provided
+        const query = req.query.query;
+        totalProducts = await Product.countDocuments({
+          $or: [
+            { name: { $regex: query, $options: 'i' } }, // Case-insensitive search for product name
+            { description: { $regex: query, $options: 'i' } }, // Case-insensitive search for product description
+          ],
+        });
+        data = await Product.find({
+          $or: [
+            { name: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+          ],
+        })
+          .skip((currentPage - 1) * pageSize)
+          .limit(pageSize);
+
+          
+      } else {
+        // No search query, retrieve all products
+        totalProducts = await Product.countDocuments();
+        data = await Product.find()
+          .skip((currentPage - 1) * pageSize)
+          .limit(pageSize);
+      }
+
+      const totalPages = Math.ceil(totalProducts / pageSize);
       const user = req.session.user;
-      const data = await Product.find().skip(skip).limit(pageSize);
       const catagory = await Catagory.find();
 
-      if (data) {
-        res.render("product", {
-          data,
-          user,
-          catagory,
-          totalPages,
-          currentPage,
-        });
-      }
+      res.render("product", {
+        data,
+        user,
+        catagory,
+        totalPages,
+        currentPage,
+      });
     } catch (err) {
       console.log(err);
       res.status(500).send("Server Error");
     }
   } else {
-    const pageSize = 6;
-    const totalProducts = await Product.countDocuments({ blocked: false });
-    const totalPages = Math.ceil(totalProducts / pageSize);
-    const data = await Product.find();
-    const catagory = await Catagory.find();
-    
-    res.render("product", { data, catagory, currentPage: 1 ,totalPages});
+    // Guest user view
+    try {
+      const pageSize = 6;
+      let currentPage = req.query.page ? parseInt(req.query.page) : 1;
+      let totalProducts, data;
+
+      if (req.query.query) {
+        // Search query is provided
+        const query = req.query.query;
+        totalProducts = await Product.countDocuments({
+          $or: [
+            { name: { $regex: query, $options: 'i' } }, // Case-insensitive search for product name
+            { description: { $regex: query, $options: 'i' } }, // Case-insensitive search for product description
+          ],
+          blocked: false, // Exclude blocked products
+        });
+        data = await Product.find({
+          $or: [
+            { name: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+          ],
+          blocked: false, // Exclude blocked products
+        })
+          .skip((currentPage - 1) * pageSize)
+          .limit(pageSize);
+      } else {
+        // No search query, retrieve all non-blocked products
+        totalProducts = await Product.countDocuments({ blocked: false });
+        data = await Product.find({ blocked: false })
+          .skip((currentPage - 1) * pageSize)
+          .limit(pageSize);
+      }
+
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const catagory = await Catagory.find();
+
+      res.render("product", {
+        data,
+        catagory,
+        currentPage: 1,
+        totalPages,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error");
+    }
   }
 };
+
 
 //Single porduct page
 

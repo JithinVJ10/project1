@@ -125,13 +125,15 @@
 				
 				<!-- Search product -->
 				<div class="dis-none panel-search w-full p-t-10 p-b-15">
-					<div class="bor8 dis-flex p-l-15">
-						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
-							<i class="zmdi zmdi-search"></i>
-						</button>
-
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
-					</div>	
+					<form action="/product" method="GET">
+						<div class="input-group mb-3">
+						  <input type="text" class="form-control" placeholder="Search products" name="query" value="<%= locals.query ? query : '' %>">
+						  <div class="input-group-append">
+							<button class="btn btn-primary" type="submit">Search</button>
+						  </div>
+						</div>
+					</form>
+					  
 				</div>
 
 				<!-- Filter -->
@@ -157,15 +159,11 @@
 								</li>
 
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Price: Low to High
-									</a>
+									<a href="/low-to-high?page=<%= currentPage %>"><button  id="lowToHighBtn">Low to High</button></a>
 								</li>
 
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Price: High to Low
-									</a>
+									<a href="/high-to-low?page=<%= currentPage %>"><button id="highToLowBtn">High to Low</button></a>
 								</li>
 							</ul>
 						</div>
@@ -177,14 +175,14 @@
 
 			<!-- images stated here hhhhhhhhhh -->
 
-			<a href="/low-to-high?page=<%= currentPage %>"><button class="btn btn-secondary" id="lowToHighBtn">Low to High</button></a>
-			<a href="/high-to-low?page=<%= currentPage %>"><button class="btn btn-secondary" id="highToLowBtn">High to Low</button></a>
+			
+			
 			
 			<div class="row isotope-grid">
 				<% data
 				  .filter((product) => !product.blocked)
 				  .forEach((product) => { %>
-				  <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= product.category %>">
+				  <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= product.catagory %>">
 					<!-- Block2 -->
 					<div class="block2">
 					  <div class="block2-pic hov-img0">
@@ -227,29 +225,29 @@
 			  
 			
 
-			<!-- Load more -->
-			<div class="row">
-				
-				<div class="col-md-12 d-flex justify-content-center">
-				  <ul class="pagination">
-					<li <% if (currentPage===1) { %>class="disabled"<% } %>>
-						<a class="btn btn-primary mr-1" <% if (currentPage> 1) { %>href="/product?page=<%= currentPage - 1 %>"<% } %>>&laquo;</a>
-					</li>
-					<% for (let i=1; i <=totalPages; i++) { %>
-						
-					  <li <% if (currentPage===i) { %>class="active"<% } %>>
-						  <a class="btn btn-secondary mr-1"  href="/product?page=<%= i %>">
-							<%= i %>
-						  </a>
-					  </li>
-					  <% } %>
-						<li <% if (currentPage===totalPages) { %>class="disabled"<% } %>>
-							<a class="btn btn-primary" <% if (currentPage < totalPages) { %>href="/product?page=<%= currentPage + 1 %>"<% } %>
-								  >&raquo;</a>
-						</li>
-				  </ul>
-				</div>
-			  </div>
+			<!-- product.ejs -->
+
+<!-- Load more -->
+<div class="row">
+	<div class="col-md-12 d-flex justify-content-center">
+	  <ul class="pagination">
+		<li <% if (currentPage === 1) { %>class="disabled"<% } %>>
+		  <a class="btn btn-primary mr-1" <% if (currentPage > 1) { %>href="/product?page=<%= currentPage - 1 %><% if (locals.query) { %>&query=<%= query %><% } %>"<% } %>>&laquo;</a>
+		</li>
+		<% for (let i = 1; i <= totalPages; i++) { %>
+		  <li <% if (currentPage === i) { %>class="active"<% } %>>
+			<a class="btn btn-secondary mr-1" href="/product?page=<%= i %><% if (locals.query) { %>&query=<%= query %><% } %>">
+			  <%= i %>
+			</a>
+		  </li>
+		<% } %>
+		<li <% if (currentPage === totalPages) { %>class="disabled"<% } %>>
+		  <a class="btn btn-primary" <% if (currentPage < totalPages) { %>href="/product?page=<%= currentPage + 1 %><% if (locals.query) { %>&query=<%= query %><% } %>"<% } %>>&raquo;</a>
+		</li>
+	  </ul>
+	</div>
+  </div>
+  
 			  
 
 		</div>
