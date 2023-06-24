@@ -53,7 +53,7 @@ route.get("/home-02",(req,res)=>{
 
 // user sign up rendering
 route.get("/signup",(req,res)=>{
-    res.render("signup")
+    res.render("Sign-Up")
 })
 
 //user signup and adding user data to DB

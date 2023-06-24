@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cricket Nation Sign-up</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="SignUpUser/css/style.css">
+</head>
+<body>
+
+    <div class="main">
+
+        <section class="signup">
+            <!-- <img src="images/signup-bg.jpg" alt=""> -->
+            <div class="container">
+                <div class="signup-content">
+                    <form action="/signup" method="POST" id="signup-form" class="signup-form" name="signup" onsubmit=" return validateSignup()">
+                        <h2 class="form-title">Create account</h2>
+                        <%if(locals.msg){%>
+                            
+                            <p id="msg" style="color: red;"><%= msg %></p>
+                         <%}%>
+                        <div class="form-group">
+                            <input oninput="capitalizeFirstLetter()" type="text" class="form-input" name="name" id="name" placeholder="Your Name"/>
+                        </div>
+                        <span id="name-error" style="color: red;"></span>
+
+                        <div class="form-group">
+                            <input type="email" class="form-input" name="email" id="email" placeholder="Your Email" onkeyup="vaildateEmail()"/>
+                            <span id="email-error" style="color: red;"></span>
+                        </div>
+                        
+
+                        <div class="form-group">
+                            <input type="number" class="form-input" name="mobile" id="mobile" placeholder="Mobile Number" onkeyup="validatePhoneNumber()"/>
+                            <span id="phone-error" style="color: red;"></span>
+                        </div>
+                        
+
+                        <div class="form-group">
+                            <input type="password" class="form-input" name="password" id="password" placeholder="Password" onkeyup="validatePassword()"/>
+
+                            <span id="password-error" style="color: red;"></span>
+                        </div>
+                        
+
+                        <div class="form-group">
+                            <input type="password" class="form-input" name="confirmpassword" id="confirmpassword" placeholder="Repeat your password"/>
+                            <span id="confirmpassword-error" style="color: red;"></span>
+                        </div>
+                        
+
+
+                        <div class="form-group">
+                            <input type="submit" name="submit" id="submit" class="form-submit" value="Sign up"/>
+                        </div>
+                    </form>
+                    <p class="loginhere">
+                        Have already an account ? <a href="/login" class="loginhere-link">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- JS -->
+
+    <script>
+
+        function capitalizeFirstLetter() {
+            var input = document.getElementById("name");
+            input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+        }
+      setTimeout(()=>{
+        document.getElementById("msg").style.display ="none"
+      },2000)
+    </script>
+    <script>
+      var nameError = document.getElementById('name-error');
+      var emailError = document.getElementById('email-error');
+      var passwordError = document.getElementById('password-error');
+      var numberError = document.getElementById('phone-error')
+      var confirmpasswordError = document.getElementById('confirmpassword-error');
+
+      // function vaildateName(){
+      //   var name = document.getElementById('name').value
+        
+      //   if(name.length == 0){
+      //     nameError.innerHTML = 'Name is required';
+      //     return false;
+      //   }
+      //   if(!name.match(/^[a-zA-Z]*\s{1}[a-zA-Z]*$/)){
+      //     nameError.innerHTML = 'Write the full name';
+      //     return false;
+      //   }
+      //   nameError.innerHTML = '✔';
+      //   return true;
+        
+      // }
+
+      function vaildateEmail(){
+        var email = document.getElementById('email').value
+        
+        if(email.length == 0){
+          emailError.innerHTML = 'Email is required';
+          return false;
+        }
+        var regx = /^\S+@\S+\.\S+$/;
+        if(regx.test(email) === false){
+          emailError.innerHTML = 'Invaild email';
+          return false;
+        }
+        emailError.innerHTML = '<span style="color: green;">✔</span>'
+        return true;
+        
+      }
+
+      function validatePhoneNumber() {
+        let number = document.getElementById('mobile').value
+        if(number.length == 0){
+          numberError.innerHTML = 'Number is required';
+          return false;
+        }
+        // Regular expression for phone number validation
+        const phonePattern = /^\d{10}$/;
+
+        if (phonePattern.test(number) == false) {
+          numberError.innerHTML ="Invaild Phone Number"
+          return false
+        }
+
+        numberError.innerHTML = '<span style="color: green;">✔</span>'
+        return true;
+        
+      }
+
+      function validatePassword() {
+        let password = document.getElementById('password').value
+
+        // Password should be at least 4 characters long
+        if (password.length < 4) {
+          passwordError.innerHTML ="atleast 4 characters long"
+          return false;
+        }
+
+        // Password should contain at least one lowercase letter
+        if (!/[a-z]/.test(password)) {
+          passwordError.innerHTML ="atleast one lowercase letter"
+          return false;
+        }
+
+        if (!/[A-Z]/.test(password)) {
+          passwordError.innerHTML = "at least one uppercase letter";
+          return false;
+        }
+
+        // Password should contain at least one number
+        if (!/\d/.test(password)) {
+          passwordError.innerHTML ="atleast one number"
+          return false;
+        }
+
+        // Check if password contains spaces
+        if (/\s/.test(password)) {
+          passwordError.innerHTML = "Password should not contain spaces";
+          return false;
+        }
+
+          // Password should contain at least one special symbol
+          if (!/[!@#$%^&*]/.test(password)) {
+            passwordError.innerHTML = "At least one special symbol";
+            return false;
+          }
+
+
+
+        // Password is valid
+        passwordError.innerHTML = '<span style="color: green;">✔</span>'
+        return true; 
+      }
+
+    
+
+
+
+      function validateSignup() {
+        let name = document.forms["signup"]["name"].value.trim();
+        let email = document.forms["signup"]["email"].value.trim();
+        let phone = document.forms["signup"]["mobile"].value.trim();
+        let password = document.forms["signup"]["password"].value;
+        let confirmpassword = document.forms["signup"]["confirmpassword"].value;
+        
+
+        if (name == "") {
+          alert("Name must be filled out");
+          return false;
+        }
+              // Validation for email field
+        if (email == "") {
+          alert("Email must be filled out");
+          return false;
+        } else {
+          // regex for email validation
+          var email_regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+          if (!email_regex.test(email)) {
+            alert("Invalid email address");
+            return false;
+          }
+        }
+        //validation for username
+        if (username == "") {
+          alert("Username must be filled out");
+          return false;
+        }
+
+
+        // Validation for password field
+        if (password == "") {
+          alert("Password must be filled out");
+          return false;
+        }
+
+        if (phone == "") {
+          alert("Phonenumber must be filled out");
+          return false;
+        }
+
+        if(confirmpassword !== password) {
+				alert("Confirm your password correctly")
+				return false;
+			  }
+
+        return true; // form is valid
+		}
+    </script>
+
+
+    <script src="SignUpUser/vendor/jquery/jquery.min.js"></script>
+    <script src="SignUpUser/js/main.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
