@@ -829,8 +829,8 @@ exports.placeorder = async (req,res)=>{
           intent: "sale",
           payer: { payment_method: "paypal" },
           redirect_urls: {
-            return_url: "http://localhost:3000/paypal-success",
-            cancel_url: "http://localhost:3000/paypal-err",
+            return_url: "https://cricketnation.shop/paypal-success",
+            cancel_url: "https://cricketnation.shop/paypal-err",
           },
           transactions: [ 
             {
