@@ -11,7 +11,9 @@ section {
     align-items: center;
     min-height: 100vh;
     width: 100%;
-    background: #edf0eb;
+    background:url('../images/signup-bg.jpg')no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .form-box {
