@@ -24,7 +24,9 @@
                         <h2 class="form-title">Create account</h2>
                         <%if(locals.msg){%>
                             
-                            <p id="msg" style="color: red;"><%= msg %></p>
+                          <div class="alert alert-danger text-center m-3 p-3" id="msg">
+                            <%= msg %>
+                        </div>
                          <%}%>
                         <div class="form-group">
                             <input oninput="capitalizeFirstLetter()" type="text" class="form-input" name="name" id="name" placeholder="Your Name"/>
@@ -216,8 +218,8 @@
           }
         }
         //validation for username
-        if (username == "") {
-          alert("Username must be filled out");
+        if (phone == "") {
+          alert("Phone number must be filled out");
           return false;
         }
 
@@ -228,13 +230,9 @@
           return false;
         }
 
-        if (phone == "") {
-          alert("Phonenumber must be filled out");
-          return false;
-        }
 
         if(confirmpassword !== password) {
-				alert("Confirm your password correctly")
+				alert("Confirm password is not matching")
 				return false;
 			  }
 

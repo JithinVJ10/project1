@@ -65,7 +65,7 @@ route.post("/signup", async (req,res)=>{
     const confirmpassword= req.body.confirmpassword
 
     if (confirmpassword !== password) {
-        return res.render("signup",{msg:"password not matching"})
+        return res.render("Sign-Up",{msg:"password not matching"})
     }
 
     const users = await userData.find({email:email,mobile:mobile})
@@ -73,7 +73,7 @@ route.post("/signup", async (req,res)=>{
     console.log(users);
 
     if (users.length > 0) {
-        return res.render("signup",{msg:"email or phone already existing"})
+        return res.render("Sign-Up",{msg:"email or phone already existing"})
     }
 
 
