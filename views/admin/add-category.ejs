@@ -86,7 +86,7 @@
                         <h6 class="mb-4">Add Catagory</h6>
                         <div id="msg"></div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" name="catagory" required oninput="capitalizeFirstLetter()">
+                            <input type="text" class="form-control" id="floatingInput" name="catagory" required >
                             <label for="floatingInput">Catagory</label>
                         </div>
                         <div class="form-floating mb-3">
@@ -112,10 +112,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
-        function capitalizeFirstLetter() {
-            var input = document.getElementById("floatingInput");
-            input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
-        }
+        // function capitalizeFirstLetter() {
+        //     var input = document.getElementById("floatingInput");
+        //     input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+        // }
 
         function addCatagory(event) {
             event.preventDefault(); // Prevent the default form submission behavior
@@ -134,7 +134,7 @@
                 url: '/addcata',
                 method: 'POST',
                 data: data,
-                success: function(response) {
+                success: (response)=> {
                     handleResponse(response);
                     if (response.success) {
                         // Display success message
@@ -146,13 +146,22 @@
                         }, 1000); 
                     } else {
                         // Display error message
-                        $('#msg').text('An error occurred: ' + response.message).css('color', 'red');
+                        $('#msg').text(`Error: ${response.message} or existing Category`).css('color', 'red');
+
+                        setTimeout(function() {
+                            $('#msg').text(''); // Clear the message
+                        }, 2000);
                     }
+
                 },
-                error: function(xhr, status, error) {
+                error: (xhr, status, error)=> {
                     console.log(error);
                     // Display the error message on the page
-                    $('#msg').text('An error occurred: ' + error).css('color', 'red');
+                    $('#msg').text(`Error: ${error} or existing Category`).css('color', 'red');
+
+                    setTimeout(function() {
+                        $('#msg').text(''); // Clear the message
+                    }, 2000);
                 }
             });
         }

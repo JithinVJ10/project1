@@ -330,7 +330,8 @@ exports.unBlockProduct=async(req,res)=>{
 
 exports.addcatagory=async(req,res)=>{
   try{
-    const newCatagory = req.body.catagory
+    const newCatagory = req.body.catagory.toLowerCase()
+    const capitalizedCatagory = newCatagory.charAt(0).toUpperCase() + newCatagory.slice(1);
     const existing = await Catagory.findOne({catagory:newCatagory})
 
     if (existing) {
@@ -343,7 +344,7 @@ exports.addcatagory=async(req,res)=>{
     }
 
     const catagory =new Catagory({
-      catagory:newCatagory,
+      catagory:capitalizedCatagory,
       description:req.body.description
     })
     const savedCatagory = await catagory.save();
@@ -355,10 +356,10 @@ exports.addcatagory=async(req,res)=>{
     });
   }
   catch(err){
+    console.log("can't add");
     console.log(err);
     res.status(500).send({
-      message:
-        err.message || "Some error occurred while creating a create operation",
+      message: "Some error occurred while creating a create operation",
     });
   }
      
